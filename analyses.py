@@ -25,21 +25,12 @@ from pathlib import Path
 import scipy.stats
 import stan
 
-# -----------------------------------------------------------------------------
-
-
-def load_report(path):
-    """Loads a Fronius report into a pandas.DataFrame."""
-    df = pd.read_csv(path, skiprows=[1])
-    df["Date and time"] = pd.to_datetime(df["Date and time"], format="%d.%m.%Y")
-    df = df.set_index("Date and time")
-    return df
-
+from solar_analyses import utils
 
 # -----------------------------------------------------------------------------
 
 reports = list(Path("Reports").glob("Energy_balance_Monthly_report_*.csv"))
-df = pd.concat([load_report(report) for report in reports])
+df = pd.concat([utils.load_report(report) for report in reports])
 df = df.sort_index()
 # Convert to kWh
 df = df / 1000.0
