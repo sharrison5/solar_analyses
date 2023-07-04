@@ -23,9 +23,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import scipy.stats
-import stan
 
-from solar_analyses import utils
+from solar_analyses import modelling, utilities as utils
 
 # -----------------------------------------------------------------------------
 
@@ -49,74 +48,7 @@ plt.show()
 
 # -----------------------------------------------------------------------------
 
-stan_code = """
-data {
-  int<lower=0> N;
-  vector<lower=0>[N] production; // Total daily production
-  vector<lower=0, upper=1>[N] t_year; // Proportion of current year that has passed
-}
-// transformed data
-parameters {
-  real<lower=0> min; // Min achievable production (cloudless shortest day)
-  real<lower=0> amplitude; // Difference in achievable production (cloudless longest v. shorted day)
-  real<lower=-pi(), upper=pi()> phase; // Offset in year
-  // real<lower=0, upper=1> lambda; // Probability of a nice day
-}
-transformed parameters {
-  vector<lower=0>[N] optimal_production
-    = min + amplitude *
-      0.5 * (1.0 + cos(2 * pi() * t_year + phase)
-    );
-  vector[N] weather_effect = production ./ optimal_production;
-}
-model {
-  // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
-  min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
-  amplitude ~ gamma(36.0, 1.2); // m: 30, v: 5^2
-
-  // von Mises: v = 1/k
-  // Summer solstice ≈10 days from end of year
-  phase ~ von_mises(0.17, 135.0); // m=2*pi*(10/365), v=(2*pi*(5/365))**2
-
-  // weather_effect ~ beta(1.0, 1.0);
-  // Do we want to infer on lambda / the beta parameters?
-  real lambda = 0.25;
-  // lambda ~ beta(2.0, 20.0);
-  for (n in 1:N) {
-    target += log_sum_exp(
-      log1m(lambda) + beta_lpdf(weather_effect[n] | 2.0, 2.0),
-      log(lambda) + beta_lpdf(weather_effect[n] | 10.0, 1.0)
-    );
-  };
-}
-generated quantities {
-  real<lower=min> max = min + amplitude; // Max achievable production (cloudless longest day)
-}
-"""
-
-stan_data = {
-    "N": len(df),
-    "production": (df["Total production"]).to_numpy(),
-    "t_year": (((df.index.day_of_year - 1) % 365) / 365).to_numpy(),
-}
-stan_model = stan.build(stan_code, data=stan_data)
-stan_fit = stan_model.sample(
-    num_chains=4,
-    num_samples=5000,
-    num_warmup=5000,
-    num_thin=100,
-    init=[
-        {
-            "min": 25.0,
-            "amplitude": 25.0,
-            "phase": 0.17
-            # "lambda": 0.05 + 0.9 * ((stan_data["production"]
-            # / (20.0 + 30.0 * 0.5 * (1.0 + np.cos(2.0 * math.pi *
-            #     stan_data["t_year"])))) > 0.9),
-        }
-    ]
-    * 4,
-).to_frame()
+[stan_data, stan_fit] = modelling.fit_model(df)
 
 # -----------------------------------------------------------------------------
 
