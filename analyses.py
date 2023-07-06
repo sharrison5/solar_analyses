@@ -24,29 +24,39 @@ import pandas as pd
 from pathlib import Path
 import scipy.stats
 
-from solar_analyses import modelling, utilities as utils
+from solar_analyses import modelling, plots, utilities
 
 # -----------------------------------------------------------------------------
 
+figure_dir = Path("figures")
+
+figures = {}
+
+# -----------------------------------------------------------------------------
+# Load and preprocess data
+
 reports = list(Path("Reports").glob("Energy_balance_Monthly_report_*.csv"))
-df = pd.concat([utils.load_report(report) for report in reports])
+df = pd.concat([utilities.load_report(report) for report in reports])
 df = df.sort_index()
 # Convert to kWh
 df = df / 1000.0
 # Exclude data from before solar system was switched on
 df = df.loc[df.index >= "2022-12-21", :]
 
-fig, ax = plt.subplots(figsize=[8.0, 4.0])
-ax.plot(df.index, df["Total production"])
-ax.set_xlabel("Date")
-ax.set_ylabel("Production (kWh)")
-fig.autofmt_xdate()
-plt.savefig("Figures/Production.jpg")
-plt.savefig("Figures/Production.pdf")
+# Generate some initial plots
+figures = {**figures, **plots.plot_raw_data(df)}
+
+# -----------------------------------------------------------------------------
+# Save and display figures
+
+for name, fig in figures.items():
+    for extension in ["jpg", "pdf"]:
+        fig.savefig(figure_dir / (name + "." + extension))
 
 plt.show()
 
 # -----------------------------------------------------------------------------
+# Fit the model
 
 stan_fit = modelling.fit_model(df)
 
@@ -60,7 +70,7 @@ weather_effect = (
     .to_numpy()
     .transpose()
 )
-offset_in_year = utils.date_to_offset_in_year(df.index)
+offset_in_year = utilities.date_to_offset_in_year(df.index)
 fig, ax = plt.subplots(figsize=[8.0, 4.0])
 # ax.plot(df.index, weather_effect)
 # ax.plot(df.index, df["Total production"] / 50000, "k")
