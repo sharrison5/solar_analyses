@@ -30,3 +30,11 @@ def load_report(path):
 
 
 # -----------------------------------------------------------------------------
+
+
+def date_to_offset_in_year(dates):
+    """Transform dates into the proportion of the current year that has passed."""
+    return (dates.day_of_year - 1) / (365 + dates.is_leap_year)
+
+
+# -----------------------------------------------------------------------------

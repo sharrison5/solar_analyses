@@ -48,7 +48,7 @@ plt.show()
 
 # -----------------------------------------------------------------------------
 
-[stan_data, stan_fit] = modelling.fit_model(df)
+stan_fit = modelling.fit_model(df)
 
 # -----------------------------------------------------------------------------
 
@@ -60,6 +60,7 @@ weather_effect = (
     .to_numpy()
     .transpose()
 )
+offset_in_year = utils.date_to_offset_in_year(df.index)
 fig, ax = plt.subplots(figsize=[8.0, 4.0])
 # ax.plot(df.index, weather_effect)
 # ax.plot(df.index, df["Total production"] / 50000, "k")
@@ -80,11 +81,11 @@ ax.bar(
 )
 ax.plot(
     df.index,
-    0.5 + 0.3 * np.cos(2.0 * math.pi * stan_data["t_year"]),
+    0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year),
     "w",
     linewidth=3.0,
 )
-ax.plot(df.index, 0.5 + 0.3 * np.cos(2.0 * math.pi * stan_data["t_year"]), "r")
+ax.plot(df.index, 0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year), "r")
 # ax.plot(
 #    df.index,
 #    0.8 * df["Total production"] / np.max(df["Total production"]), "r")

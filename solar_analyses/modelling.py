@@ -18,6 +18,8 @@
 
 import stan
 
+from solar_analyses import utilities
+
 # -----------------------------------------------------------------------------
 
 _stan_code = """
@@ -82,7 +84,7 @@ def fit_model(df):
     stan_data = {
         "N": len(df),
         "production": (df["Total production"]).to_numpy(),
-        "t_year": (((df.index.day_of_year - 1) % 365) / 365).to_numpy(),
+        "t_year": utilities.date_to_offset_in_year(df.index).to_numpy(),
     }
 
     stan_model = stan.build(_stan_code, data=stan_data)
@@ -95,7 +97,7 @@ def fit_model(df):
         init=4 * [{"min": 25.0, "amplitude": 25.0, "phase": 0.17}],
     ).to_frame()
 
-    return [stan_data, stan_fit]
+    return stan_fit
 
 
 # -----------------------------------------------------------------------------
