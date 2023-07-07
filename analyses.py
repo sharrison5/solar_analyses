@@ -34,7 +34,7 @@ figures = {}
 # -----------------------------------------------------------------------------
 # Load and preprocess data
 
-reports = list(Path("Reports").glob("Energy_balance_Monthly_report_*.csv"))
+reports = list(Path("reports").glob("Energy_balance_Monthly_report_*.csv"))
 df = pd.concat([utilities.load_report(report) for report in reports])
 df = df.sort_index()
 # Convert to kWh
