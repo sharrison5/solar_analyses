@@ -42,6 +42,14 @@ df = df / 1000.0
 # Exclude data from before solar system was switched on
 df = df.loc[df.index >= "2022-12-21", :]
 
+# Summarise total production by year
+print(
+    df["Total production"]
+    .groupby(lambda x: x.year)
+    .aggregate(["sum", "count"])
+    .rename(columns={"sum": "Total production (kWh)", "count": "# days"})
+)
+
 # Generate some initial plots
 figures = {**figures, **plots.plot_raw_data(df)}
 
