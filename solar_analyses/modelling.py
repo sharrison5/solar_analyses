@@ -40,14 +40,18 @@ parameters {
   real<lower=0> amplitude;
   // Offset of max in year
   real<lower=-pi(), upper=pi()> phase;
+  // How much inverter limit causes clipping of production
+  real<lower=0> saturation;
   // real<lower=0, upper=1> lambda; // Probability of a nice day
 }
 
 transformed parameters {
+  vector[N] instantaneous_phase
+    = 2 * pi() * t_year + phase;
+  vector<lower=0, upper=1>[N] seasonal_oscillation
+    = tanh(saturation * 0.5 * (cos(instantaneous_phase) + 1));
   vector<lower=0>[N] optimal_production
-    = min + amplitude *
-      0.5 * (1.0 + cos(2 * pi() * t_year + phase)
-    );
+    = min + amplitude * seasonal_oscillation;
   vector[N] weather_effect = production ./ optimal_production;
 }
 
@@ -55,6 +59,7 @@ model {
   // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
   min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
   amplitude ~ gamma(36.0, 1.2); // m: 30, v: 5^2
+  saturation ~ gamma(5.0, 5.0); // m: 1, v: 0.2
 
   // von Mises: v = 1/k
   // Summer solstice ≈10 days from end of year
@@ -74,7 +79,7 @@ model {
 
 generated quantities {
   // Max optimal production (cloudless longest day)
-  real<lower=min> max = min + amplitude;
+  real<lower=min> max = min + amplitude * tanh(saturation);
 }
 """
 
@@ -94,7 +99,7 @@ def fit_model(df):
         num_samples=5000,
         num_warmup=5000,
         num_thin=100,
-        init=4 * [{"min": 25.0, "amplitude": 25.0, "phase": 0.17}],
+        init=4 * [{"min": 25.0, "amplitude": 40.0, "phase": 0.17, "saturation": 1.0}],
     ).to_frame()
 
     return stan_fit
