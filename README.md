@@ -61,7 +61,7 @@ The plots below show the distributions over the key parameters.
 </a>
 
 **Figure**: Distribution of the theoretical maximum daily energy production
-($E_{opt}(t)$) over the life of the system, plotted against the actual
+( $E_{opt}(t)$ ) over the life of the system, plotted against the actual
 production.
 
 ---------
@@ -75,7 +75,7 @@ production.
 </a>
 
 **Figure**: Proportion of the theoretical maximum daily energy production
-($E(t) / E_{opt}(t)$) actually achieved over the life of the system, and the
+( $E(t) / E_{opt}(t)$ ) actually achieved over the life of the system, and the
 marginal distribution of this plotted against its prior.
 
 ---------
