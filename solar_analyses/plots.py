@@ -51,7 +51,7 @@ def plot_raw_data(df):
 
 
 def plot_optimal_production(df, stan_fit):
-    """Summarise the posterior over the weather effect parameters."""
+    """Summarise the posterior over the optimal production curve."""
 
     figures = {}
 
@@ -75,8 +75,15 @@ def plot_optimal_production(df, stan_fit):
     ax.set_xlabel("Date")
     ax.set_ylabel("Production (kWh)")
     fig.autofmt_xdate()
-
     figures["optimal_production"] = fig
+
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
+    ax.plot(stan_fit["min"], stan_fit["max"], ".")
+    ax.axis("equal")
+    ax.grid(which="major", linestyle=":")
+    ax.set_xlabel(r"Minimum $E_{opt}(t)$ (kWh)")
+    ax.set_ylabel(r"Maximum $E_{opt}(t)$ (kWh)")
+    figures["optimal_production_limits"] = fig
 
     return figures
 
@@ -121,7 +128,7 @@ def plot_weather_effect(df, stan_fit):
     figures["weather_effect"] = fig
 
     # Compare marginal distribution to prior
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.hist(
         weather_effect.flatten(),
         bins=np.linspace(0.0, 1.0, 50),

@@ -64,7 +64,7 @@ The plots below show the distributions over the key parameters.
 </a>
 
 **Figure**: Distribution of the theoretical maximum daily energy production
-( $E_{opt}(t)$ ) over the life of the system, plotted against the actual
+($`E_{opt}(t)`$) over the life of the system, plotted against the actual
 production.
 
 ---------
@@ -73,12 +73,21 @@ production.
 <img src="figures/weather_effect.jpg" width="90%">
 </a>
 
+**Figure**: Proportion of the theoretical maximum daily energy production
+($`E(t) / E_{opt}(t)`$) actually achieved over the life of the system.
+
+---------
+
+<a href="figures/optimal_production_limits.pdf">
+<img src="figures/optimal_production_limits.jpg" width="45%">
+</a>
 <a href="figures/weather_effect_distribution.pdf">
 <img src="figures/weather_effect_distribution.jpg" width="45%">
 </a>
 
-**Figure**: Proportion of the theoretical maximum daily energy production
-( $E(t) / E_{opt}(t)$ ) actually achieved over the life of the system, and the
-marginal distribution of this plotted against its prior.
+**Figure**, **Left**: Posterior distribution over the maximum and minimum of
+the optimal production curve ($`E_{opt}(t)`$). **Right**: Marginal posterior
+distribution of the proportion of the theoretical maximum daily energy
+production actually achieved ($`E(t) / E_{opt}(t)`$) plotted against its prior.
 
 ---------
