@@ -37,11 +37,14 @@ sketch of the key components of the model:
    $\delta$ represents the offset between the start of the year and the date of
    peak energy generation.
 
- + Seasonal oscillation: $s(t) = \tanh(\gamma (\cos(\phi(t)) + 1) / 2)$. This
+ + Seasonal oscillation: $s(t) = \tanh(\gamma (\cos(\phi(t) +
+   \beta_{c1}\cos(\phi(t)) + \beta_{s1}\sin(\phi(t))) + 1) / 2)$. This
    represents the fluctuation in energy generation over the year, with the
    $\tanh$ term capturing the way that the limit to the inverter output causes
    this to saturate over the summer. The $\gamma$ parameter controls the
-   strength of this saturation.
+   strength of this saturation. Furthermore, the sinusoidal basis and $\beta$
+   terms allow the shape of the underlying sinusoidal oscillation to be
+   tweaked.
 
  + Optimal production: $E_{opt}(t) = a + b s(t)$ where $a$ represents the
    maximum possible production on the shortest day of the year, and $b$

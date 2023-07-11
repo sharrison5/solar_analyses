@@ -101,12 +101,18 @@ plt.figure()
 plt.hist(stan_fit["min"], bins=99)
 plt.figure()
 plt.hist(stan_fit["saturation"], bins=99)
+
 fig, ax = plt.subplots()
 ax.plot(stan_fit["min"], stan_fit["max"], ".")
-# ax.plot(stan_fit["amplitude"], stan_fit["saturation"], ".")
 ax.axis("equal")
-ax.set_xlabel("Min (kWh)")
-ax.set_ylabel("Max (kWh)")
+ax.set_xlabel(r"Minimum $E_{opt}(t)$ (kWh)")
+ax.set_ylabel(r"Maximum $E_{opt}(t)$ (kWh)")
+
+fig, ax = plt.subplots()
+ax.plot(stan_fit["beta_c1"], stan_fit["beta_s1"], ".")
+ax.axis("equal")
+ax.set_xlabel(r"$\beta_{c1}$")
+ax.set_ylabel(r"$\beta_{s1}$")
 
 
 # fig, ax = plt.subplots()
