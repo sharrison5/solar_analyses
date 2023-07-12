@@ -46,32 +46,36 @@ def plot_raw_data(df):
 
 # -----------------------------------------------------------------------------
 
-# To do:
-#  Turn weather_effect / optimal production into proper multi-index dataframes
-
 
 def plot_optimal_production(df, stan_fit):
     """Summarise the posterior over the optimal production curve."""
 
     figures = {}
 
-    optimal_production = (
-        stan_fit.loc[:, stan_fit.columns.str.startswith("optimal_production")]
-        .to_numpy()
-        .transpose()
+    optimal_production = utilities.extract_posterior_timeseries(
+        "optimal_production", df, stan_fit
     )
 
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
     # Raw data
     ax.bar(df.index, df["Total production"])
     # Distribution of optimal production over time
-    ax.plot(df.index, optimal_production, color=[0.7] * 3, linewidth=0.2)
     ax.plot(
-        df.index,
-        np.quantile(optimal_production, [0.25, 0.75], axis=1).transpose(),
+        optimal_production.index,
+        optimal_production,
+        color=[0.7] * 3,
+        linewidth=0.2,
+    )
+    ax.plot(
+        optimal_production.index,
+        optimal_production.quantile([0.25, 0.75], axis=1).T,
         color=[0.4] * 3,
     )
-    ax.plot(df.index, np.median(optimal_production, axis=1), "r")
+    ax.plot(
+        optimal_production.index,
+        optimal_production.median(axis=1),
+        "r",
+    )
     ax.set_xlabel("Date")
     ax.set_ylabel("Production (kWh)")
     fig.autofmt_xdate()
@@ -96,31 +100,25 @@ def plot_weather_effect(df, stan_fit):
 
     figures = {}
 
-    weather_effect = (
-        stan_fit.loc[:, stan_fit.columns.str.startswith("weather_effect")]
-        .to_numpy()
-        .transpose()
+    weather_effect = utilities.extract_posterior_timeseries(
+        "weather_effect", df, stan_fit
     )
-    offset_in_year = utilities.date_to_offset_in_year(df.index)
+    offset_in_year = utilities.date_to_offset_in_year(weather_effect.index)
 
     # Plot weather effect over time
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
     ax.bar(
-        df.index,
-        np.median(weather_effect, axis=1),
-        yerr=np.abs(
-            np.median(weather_effect, axis=1)
-            - np.quantile(weather_effect, [0.25, 0.75], axis=1)
-        ),
+        weather_effect.index,
+        weather_effect.median(axis=1),
+        yerr=(
+            weather_effect.median(axis=1)
+            - weather_effect.quantile([0.25, 0.75], axis=1)
+        ).abs(),
     )
     # Plot the seasonality as a sinusoid
-    ax.plot(
-        df.index,
-        0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year),
-        "w",
-        linewidth=3.0,
-    )
-    ax.plot(df.index, 0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year), "r")
+    seasonality = 0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year)
+    ax.plot(weather_effect.index, seasonality, "w", linewidth=3.0)
+    ax.plot(weather_effect.index, seasonality, "r")
     ax.set_xlabel("Date")
     ax.set_ylabel("Weather effect")
     fig.autofmt_xdate()
@@ -130,7 +128,7 @@ def plot_weather_effect(df, stan_fit):
     # Compare marginal distribution to prior
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.hist(
-        weather_effect.flatten(),
+        weather_effect.stack(),
         bins=np.linspace(0.0, 1.0, 50),
         density=True,
         rwidth=0.9,
