@@ -63,6 +63,7 @@ stan_fit = modelling.fit_model(df)
 
 figures = {
     **figures,
+    **plots.plot_seasonal_oscillation(df, stan_fit),
     **plots.plot_optimal_production(df, stan_fit),
     **plots.plot_weather_effect(df, stan_fit),
 }
@@ -109,7 +110,6 @@ ax.grid(which="major", linestyle=":")
 ax.set_xlabel(r"$\beta_{c1}$")
 ax.set_ylabel(r"$\beta_{s1}$")
 
-
 # fig, ax = plt.subplots()
 # plt.plot(
 #     stan_fit.loc[:, stan_fit.columns.str.startswith("weather_effect")]
@@ -120,14 +120,16 @@ ax.set_ylabel(r"$\beta_{s1}$")
 #     markersize=2,
 # )
 
-fig, ax = plt.subplots()
-ax.hist(  # 365 * stan_fit["phase"] / (2 * math.pi), bins=99)
-    (365 * stan_fit.loc[:, "phase"] / (2 * math.pi)).apply(
-        lambda x: pd.to_datetime("2000-01-01") - pd.DateOffset(math.floor(x))
-    ),
-    bins=99,
+phase = (
+    (365 * stan_fit.loc[:, "phase"] / (2 * math.pi))
+    .apply(lambda x: pd.to_datetime("2000-01-01") - pd.DateOffset(math.floor(x)))
+    .value_counts()
 )
+fig, ax = plt.subplots()
+ax.bar(phase.index, phase / len(stan_fit))
 ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
+ax.set_xlabel(r"Phase ($\delta$)")
+ax.set_ylabel("Probability density")
 fig.autofmt_xdate()
 
 plt.show()

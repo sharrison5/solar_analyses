@@ -78,16 +78,33 @@ production.
 
 ---------
 
+<a href="figures/seasonal_oscillation.pdf">
+<img src="figures/seasonal_oscillation.jpg" width="90%">
+</a>
+
+**Figure**: Shape of the seasonal oscillation ($`s(t)`$) illustrating the
+fluctuation in the production curve over the year.
+
+---------
+
 <a href="figures/optimal_production_limits.pdf">
 <img src="figures/optimal_production_limits.jpg" width="45%">
 </a>
+<a href="figures/seasonal_oscillation_saturation.pdf">
+<img src="figures/seasonal_oscillation_saturation.jpg" width="45%">
+</a>
+
 <a href="figures/weather_effect_distribution.pdf">
 <img src="figures/weather_effect_distribution.jpg" width="45%">
 </a>
 
-**Figure**, **Left**: Posterior distribution over the maximum and minimum of
-the optimal production curve ($`E_{opt}(t)`$). **Right**: Marginal posterior
-distribution of the proportion of the theoretical maximum daily energy
-production actually achieved ($`E(t) / E_{opt}(t)`$) plotted against its prior.
+**Figure**, **Top Left**: Posterior distribution over the maximum and minimum
+of the optimal production curve ($`E_{opt}(t)`$).
+**Top Right**: Posterior distribution over the saturation parameter
+($`\gamma`S) of the seasonal oscillation showing its correlation with the
+amplitude of this fluctuation ($`b`$).
+**Bottom Left**: Marginal posterior distribution of the proportion of the
+theoretical maximum daily energy production actually achieved
+($`E(t) / E_{opt}(t)`$) plotted against its prior.
 
 ---------

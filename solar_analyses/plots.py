@@ -17,8 +17,9 @@
 # limitations under the License.
 
 import math
-import matplotlib.pyplot as plt
+import matplotlib as mpl, matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy.stats
 
 from solar_analyses import utilities
@@ -40,6 +41,71 @@ def plot_raw_data(df):
     ax.legend()
     fig.autofmt_xdate()
     figures["production"] = fig
+
+    return figures
+
+
+# -----------------------------------------------------------------------------
+
+
+def plot_seasonal_oscillation(df, stan_fit):
+    """Summarise the posterior over the seasonal oscillation in production."""
+
+    figures = {}
+
+    # Plot posterior draws against a pure sinusoid
+    proportion = np.linspace(0.0, 1.0, 1000)
+    theta = 2.0 * math.pi * proportion
+    dates = pd.to_datetime(365 * proportion, origin="2000-01-01", unit="D")
+    phase = (
+        theta[:, None]
+        + np.outer(np.cos(theta), stan_fit["beta_c1"])
+        + np.outer(np.sin(theta), stan_fit["beta_s1"])
+        + stan_fit["phase"].to_numpy()
+    )
+    normalised_samples = (
+        stan_fit["amplitude"].to_numpy()
+        * np.tanh(stan_fit["saturation"].to_numpy() * 0.5 * (1.0 + np.cos(phase)))
+        / stan_fit["amplitude"].mean()
+    )
+    pure_sinusoid = 0.5 * (1.0 + np.cos(theta + stan_fit["phase"].mean()))
+    # And make the plot
+    fig, ax = plt.subplots(figsize=[8.0, 4.0])
+    # Plot all the samples
+    ax.plot(dates, normalised_samples, color=[0.7] * 3, linewidth=0.2)
+    # Plot a random subset to highlight how these vary
+    ax.plot(
+        dates,
+        normalised_samples[
+            :, np.random.choice(normalised_samples.shape[1], 5, replace=False)
+        ],
+        color=[0.3] * 3,
+        linewidth=0.5,
+    )
+    # Then the median over samples (illustrative only, doesn't account for
+    # temporal dependencies)
+    ax.plot(
+        dates, np.median(normalised_samples, axis=1), "k", label=r"$(b / \bar{b}) s(t)$"
+    )
+    # And finally a pure sinusoid without any shape terms for comparison
+    ax.plot(dates, pure_sinusoid, "w", linewidth=3.0)
+    ax.plot(dates, pure_sinusoid, "r", label=r"$\cos(\phi(t))$")
+    ax.set_xlim(dates[0], dates[-1])
+    ax.xaxis.set_major_locator(mpl.dates.MonthLocator(bymonthday=15))
+    ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%b"))
+    ax.set_xlabel("Time of year")
+    ax.set_ylabel("Fluctuation in production")
+    ax.legend()
+    fig.autofmt_xdate()
+    figures["seasonal_oscillation"] = fig
+
+    # Plot saturation v amplitude
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
+    ax.plot(stan_fit["saturation"], stan_fit["amplitude"], ".")
+    ax.grid(which="major", linestyle=":")
+    ax.set_xlabel(r"Saturation ($\gamma$)")
+    ax.set_ylabel(r"Amplitude ($b$)")
+    figures["seasonal_oscillation_saturation"] = fig
 
     return figures
 
