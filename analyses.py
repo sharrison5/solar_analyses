@@ -42,6 +42,9 @@ df = df / 1000.0
 # Exclude data from before solar system was switched on
 df = df.loc[df.index >= "2022-12-21", :]
 
+# -----------------------------------------------------------------------------
+# Basic analyses of the raw data
+
 # Summarise total production by year
 print(
     df["Total production"]

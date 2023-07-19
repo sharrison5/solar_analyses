@@ -99,6 +99,22 @@ def plot_seasonal_oscillation(df, stan_fit):
     fig.autofmt_xdate()
     figures["seasonal_oscillation"] = fig
 
+    # Plot the date at which the maximum occurs
+    max_date_hist = (
+        dates[np.argmax(normalised_samples, axis=0)].round("D").value_counts()
+    )
+    # Wrap Jan to after December rather than at start of year
+    max_date_hist.index = max_date_hist.index.map(
+        lambda x: x + pd.DateOffset(years=(x.month <= 6))
+    )
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
+    ax.bar(max_date_hist.index, max_date_hist / len(stan_fit))
+    ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
+    ax.set_xlabel(r"Date of peak production (argmax $s(t)$)")
+    ax.set_ylabel("Probability density")
+    fig.autofmt_xdate()
+    figures["seasonal_oscillation_peak_date"] = fig
+
     # Plot saturation v amplitude
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.plot(stan_fit["saturation"], stan_fit["amplitude"], ".")
