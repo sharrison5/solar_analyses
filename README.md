@@ -11,8 +11,24 @@ All figures are clickable links to higher quality versions.
 
  + 16 x Hyundai HiE-S400VG panels (400W).
  + Fronius Primo GEN24 5.0 Inverter (5kW).
+   Connected as two strings: one for the 4 east facing panels, and the other
+   for the 12 north facing panels (wired as two parallel sets of 6 panels).
  + Fronius Ohmpilot (connected to 3kW element).
  + Installed in Dunedin, NZ.
+
+### Raw data
+
+The average monthly output (as compared to the predictions as quoted) are
+tabulated below, as well as a plot of the recorded daily output.
+
+| Month   |   Predicted (kWh) |   Observed (kWh) |
+|:--------|------------------:|-----------------:|
+| Jan     |               805 |             1035 |
+| Feb     |               731 |              867 |
+| Mar     |               568 |              699 |
+| Apr     |               401 |              535 |
+| May     |               251 |              365 |
+| Jun     |               183 |              311 |
 
 ---------
 
@@ -101,7 +117,7 @@ fluctuation in the production curve over the year.
 **Figure**, **Top Left**: Posterior distribution over the maximum and minimum
 of the optimal production curve ($`E_{opt}(t)`$).
 **Top Right**: Posterior distribution over the saturation parameter
-($`\gamma`S) of the seasonal oscillation showing its correlation with the
+($`\gamma`$) of the seasonal oscillation showing its correlation with the
 amplitude of this fluctuation ($`b`$).
 **Bottom Left**: Marginal posterior distribution of the proportion of the
 theoretical maximum daily energy production actually achieved

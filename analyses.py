@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-from solar_analyses import modelling, plots, utilities
+from solar_analyses import analysis, modelling, plots, utilities
 
 # -----------------------------------------------------------------------------
 
@@ -47,8 +47,19 @@ print(
     df["Total production"]
     .groupby(lambda x: x.year)
     .aggregate(["sum", "count"])
+    .rename_axis("Year", axis="index")
     .rename(columns={"sum": "Total production (kWh)", "count": "# days"})
+    .to_markdown()
 )
+print()
+
+# Compare monthly breakdown to the predictions from Dunedin Solar
+print(
+    analysis.compare_with_predictions(df, utilities.load_predictions()).to_markdown(
+        floatfmt=".0f"
+    )
+)
+print()
 
 # Generate some initial plots
 figures = {**figures, **plots.plot_raw_data(df)}

@@ -29,6 +29,12 @@ def load_report(path):
     return df
 
 
+def load_predictions():
+    """Loads the predicted monthly output into a pandas.DataFrame."""
+    df = pd.read_csv("predicted_production.csv", index_col="Month")
+    return df
+
+
 # -----------------------------------------------------------------------------
 
 

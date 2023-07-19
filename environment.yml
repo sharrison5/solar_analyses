@@ -14,5 +14,6 @@ dependencies:
   - pip
   - pre-commit
   - scipy
+  - tabulate
   - pip:
     - pystan
