@@ -29,6 +29,7 @@ tabulated below, as well as a plot of the recorded daily output.
 | Apr     |               401 |              535 |
 | May     |               251 |              365 |
 | Jun     |               183 |              311 |
+| Jul     |               238 |              311 |
 
 ---------
 
@@ -123,7 +124,7 @@ of the optimal production curve ($`E_{opt}(t)`$).
 ($`\gamma`$) of the seasonal oscillation showing its correlation with the
 amplitude of this fluctuation ($`b`$).
 **Bottom Left**: Posterior distribution of the day of the year for which the
-theoretical maximum daily energy production peaks ($`\arg\max((s(t))`$).
+theoretical maximum daily energy production peaks ($`\arg\max(s(t))`$).
 **Bottom Right**: Marginal posterior distribution of the proportion of the
 theoretical maximum daily energy production actually achieved
 ($`E(t) / E_{opt}(t)`$) plotted against its prior.
