@@ -30,6 +30,7 @@ tabulated below, as well as a plot of the recorded daily output.
 | May     |               251 |              365 |
 | Jun     |               183 |              311 |
 | Jul     |               238 |              311 |
+| Aug     |               330 |              473 |
 
 ---------
 
