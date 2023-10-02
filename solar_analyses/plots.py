@@ -221,7 +221,7 @@ def plot_weather_effect(df, stan_fit):
     ax.plot(
         x,
         (1.0 - p) * scipy.stats.beta.pdf(x, 2.0, 2.0)
-        + p * scipy.stats.beta.pdf(x, 10.0, 1.0),
+        + p * scipy.stats.beta.pdf(x, 15.0, 2.0),
         label="Prior",
     )
     ax.set_xlabel("Weather effect")

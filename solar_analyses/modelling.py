@@ -81,7 +81,7 @@ model {
   for (n in 1:N) {
     target += log_sum_exp(
       log1m(lambda) + beta_lpdf(weather_effect[n] | 2.0, 2.0),
-      log(lambda) + beta_lpdf(weather_effect[n] | 10.0, 1.0)
+      log(lambda) + beta_lpdf(weather_effect[n] | 15.0, 2.0)
     );
   };
 }
