@@ -89,7 +89,7 @@ def plot_seasonal_oscillation(df, stan_fit):
     )
     # And finally a pure sinusoid without any shape terms for comparison
     ax.plot(dates, pure_sinusoid, "w", linewidth=3.0)
-    ax.plot(dates, pure_sinusoid, "r", label=r"$\cos(\phi(t))$")
+    ax.plot(dates, pure_sinusoid, "tab:red", label=r"$\cos(\phi(t))$")
     ax.set_xlim(dates[0], dates[-1])
     ax.xaxis.set_major_locator(mpl.dates.MonthLocator(bymonthday=15))
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%b"))
@@ -156,7 +156,7 @@ def plot_optimal_production(df, stan_fit):
     ax.plot(
         optimal_production.index,
         optimal_production.median(axis=1),
-        "r",
+        "tab:red",
     )
     ax.set_xlabel("Date")
     ax.set_ylabel("Production (kWh)")
@@ -199,10 +199,25 @@ def plot_weather_effect(df, stan_fit):
     )
     # Plot the seasonality as a sinusoid
     seasonality = 0.5 + 0.3 * np.cos(2.0 * math.pi * offset_in_year)
-    ax.plot(weather_effect.index, seasonality, "w", linewidth=3.0)
-    ax.plot(weather_effect.index, seasonality, "r")
+    ax.plot(weather_effect.index, seasonality, "w", linewidth=4.0)
+    ax.plot(weather_effect.index, seasonality, "tab:red", label=r"$\cos(2 \pi p(t))$")
+    # Add rolling averages
+    fortnightly_average = (
+        weather_effect.rolling(window=14, center=True, axis="index")
+        .mean()
+        .median(axis="columns")
+    )
+    ax.plot(weather_effect.index, fortnightly_average, "w", linewidth=4.0)
+    ax.plot(
+        weather_effect.index,
+        fortnightly_average,
+        "tab:pink",
+        label="Fortnightly average",
+    )
+    # Labels etc.
     ax.set_xlabel("Date")
     ax.set_ylabel("Weather effect")
+    ax.legend()
     fig.autofmt_xdate()
     ax.set_ylim(0.0, 1.0)
     figures["weather_effect"] = fig
