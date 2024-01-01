@@ -23,7 +23,7 @@ tabulated below, as well as a plot of the recorded daily output.
 
 | Month   |   Predicted (kWh) |   Observed (kWh) |
 |:--------|------------------:|-----------------:|
-| Jan     |               805 |             1035 |
+| Jan     |               805 |             1048 |
 | Feb     |               731 |              867 |
 | Mar     |               568 |              699 |
 | Apr     |               401 |              535 |
