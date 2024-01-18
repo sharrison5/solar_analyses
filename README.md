@@ -76,16 +76,16 @@ sketch of the key components of the model:
    is a mixture of beta distributions, to capture clear sunny days separately
    from those with cloud cover.
 
- + Realised production: $E(t) = \operatorname{sat}(w(t) E_{avail}(t))$. The
+ + Realised production: $E(t) = \mathop{\text{sat}}(w(t) E_{avail}(t))$. The
    actual amount of energy generated is lower than the theoretical limit due to
    both the weather effect and the inverter clipping power output. The latter
    is modelled as
-   $\operatorname{sat}(e) = (-1 / \tau) \operatorname{LSE}(- \tau e, - \tau \gamma)$
+   $\mathop{\text{sat}}(e) = (-1 / \tau) \mathop{\text{LSE}}(- \tau e, - \tau \gamma)$
    where the LogSumExp function is used as a softmin of the incident energy and
    a hard upper limit on production $\gamma$. The sharpness of the transition
    between the linear and saturating regimes is governed by $\tau$.
 
- + Optimal production: $E_{opt}(t) = \operatorname{sat}(E_{avail}(t))$
+ + Optimal production: $E_{opt}(t) = \mathop{\text{sat}}(E_{avail}(t))$
    is a convenience representation of the above. It illustrates what production
    would be achievable per day without weather effects.
 
