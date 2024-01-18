@@ -23,6 +23,49 @@ from solar_analyses import utilities
 # -----------------------------------------------------------------------------
 
 _stan_code = """
+functions {
+  // Models the saturation as the softmin of the input (i.e. a linear region)
+  // and a hard upper limit.
+  // https://en.wikipedia.org/wiki/LogSumExp
+  vector saturation(vector E, real limit, real smoothness){
+    real sharpness = 1.0 / smoothness;
+    vector[size(E)] E_sat;
+    for (i in 1:size(E)) {
+      E_sat[i] = (-1.0 / sharpness) * log_sum_exp(
+        - sharpness * E[i],
+        - sharpness * limit
+      );
+    }
+    return E_sat;
+  }
+
+  vector inv_saturation(vector E_sat, real limit, real smoothness){
+    real sharpness = 1.0 / smoothness;
+    vector[size(E_sat)] E;
+    for (i in 1:size(E_sat)) {
+      E[i] = (-1.0 / sharpness) * log_diff_exp(
+        - sharpness * E_sat[i],
+        - sharpness * limit
+      );
+    }
+    return E;
+  }
+
+  vector instantaneous_phase(vector t_year, real phase) {
+    return 2.0 * pi() * t_year + phase;
+  }
+
+  vector seasonal_oscillation(
+    vector instantaneous_phase, real beta_c1, real beta_s1
+  ) {
+    return 0.5 * (1.0 + cos(
+        instantaneous_phase
+        + beta_c1 * cos(instantaneous_phase)
+        + beta_s1 * sin(instantaneous_phase)
+      ));
+  }
+}
+
 data {
   int<lower=0> N;
   // Total daily production
@@ -31,42 +74,57 @@ data {
   vector<lower=0, upper=1>[N] t_year;
 }
 
-// transformed data {}
+transformed data {
+  // Reference version of `t_year` for a single year
+  vector<lower=0, upper=1>[365] t_year_ref;
+  for (i in 1:365) {
+    t_year_ref[i] = (i - 1) / 365.0;
+  }
+}
 
 parameters {
-  // Min optimal production (cloudless shortest day)
+  // Min available energy (cloudless shortest day)
   real<lower=0> min;
-  // Difference in optimal production (i.e. longest v. shortest day)
+  // Difference in available energy (i.e. longest v. shortest day)
   real<lower=0> amplitude;
-  // Offset of max in year
+
+  // Offset of day of peak production in year
   real<lower=-pi(), upper=pi()> phase;
-  // Coefficients controlling how much sinusoidal basis affects seasonal variation
+  // Coefficients controlling how much sinusoidal basis affects seasonal
+  // oscillation
   real beta_c1, beta_s1;
-  // How much inverter limit causes clipping of production
-  real<lower=0> saturation;
-  // real<lower=0, upper=1> lambda; // Probability of a nice day
+
+  // Parameters describing how much inverter limit causes clipping of production
+  real<lower=0> saturation_limit;
+  real<lower=0> saturation_smoothness;
 }
 
 transformed parameters {
-  vector[N] instantaneous_phase
-    = 2 * pi() * t_year + phase;
-  vector<lower=0, upper=1>[N] seasonal_oscillation
-    = tanh(saturation * 0.5 * (1 + cos(
-        instantaneous_phase
-        + beta_c1 * cos(instantaneous_phase)
-        + beta_s1 * sin(instantaneous_phase)
-      )));
-  vector<lower=0>[N] optimal_production
-    = min + amplitude * seasonal_oscillation;
-  vector[N] weather_effect = production ./ optimal_production;
+  // Daily timeseries of total energy available from the panels
+  vector<lower=0>[N] E_available
+    = min + amplitude * seasonal_oscillation(
+      instantaneous_phase(t_year, phase), beta_c1, beta_s1
+    );
+
+  // Daily variables describing the factor by which clouds etc. reduced
+  // energy generation
+  // production = saturation(weather-effect * E_available)
+  vector[N] weather_effect
+    = inv_saturation(
+        production,
+        saturation_limit,
+        saturation_smoothness
+      ) ./ E_available;
 }
 
 model {
   // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
   min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
   amplitude ~ gamma(64.0, 1.6); // m: 40, v: 5^2
-  saturation ~ gamma(5.0, 5.0); // m: 1, v: 0.2
+  saturation_limit ~ gamma(100.0, 2.0); // m: 50, v: 5^2
+  saturation_smoothness ~ gamma(25.0, 5.0); // m: 5, v: 1^2
 
+  // Normal
   beta_c1 ~ normal(0.0, 0.25); // m: 0, s: 0.5
   beta_s1 ~ normal(0.0, 0.25); // m: 0, s: 0.5
 
@@ -74,10 +132,8 @@ model {
   // Summer solstice ≈10 days from end of year
   phase ~ von_mises(0.17, 135.0); // m=2*pi*(10/365), v=(2*pi*(5/365))**2
 
-  // weather_effect ~ beta(1.0, 1.0);
-  // Do we want to infer on lambda / the beta parameters?
+  // Beta: m = a / (a + b)
   real lambda = 0.25;
-  // lambda ~ beta(2.0, 20.0);
   for (n in 1:N) {
     target += log_sum_exp(
       log1m(lambda) + beta_lpdf(weather_effect[n] | 2.0, 2.0),
@@ -87,8 +143,41 @@ model {
 }
 
 generated quantities {
-  // Max optimal production (cloudless longest day)
-  real<lower=min> max = min + amplitude * tanh(saturation);
+  // Daily optimal production (i.e. accounting for clipping from inverter)
+  // weather_effect = 1.0
+  vector<lower=0>[N] E_optimal
+    = saturation(
+        E_available,
+        saturation_limit,
+        saturation_smoothness
+      );
+
+  // Max/min optimal production (cloudless longest/shortest day)
+  // weather_effect = 1.0, seasonal_oscillation = 1.0 / 0.0
+  real E_optimal_max
+    = saturation(
+        [min + amplitude]',
+        saturation_limit,
+        saturation_smoothness
+      )[1];
+  real E_optimal_min
+    = saturation(
+        [min]',
+        saturation_limit,
+        saturation_smoothness
+      )[1];
+
+  // Versions of the above for the timeseries of the reference year
+  vector<lower=0>[365] E_available_ref
+    = min + amplitude * seasonal_oscillation(
+      instantaneous_phase(t_year_ref, phase), beta_c1, beta_s1
+    );
+  vector<lower=0>[365] E_optimal_ref
+    = saturation(
+        E_available_ref,
+        saturation_limit,
+        saturation_smoothness
+      );
 }
 """
 
@@ -107,13 +196,14 @@ def fit_model(df):
         num_chains=4,
         num_samples=5000,
         num_warmup=5000,
-        num_thin=100,
+        num_thin=25,
         init=[
             {
                 "min": 20.0,
                 "amplitude": 40.0,
                 "phase": 0.17,
-                "saturation": 1.0,
+                "saturation_limit": 50.0,
+                "saturation_smoothness": 5.0,
                 "beta_c1": 0.0,
                 "beta_s1": 0.0,
             }

@@ -60,22 +60,34 @@ sketch of the key components of the model:
    peak energy generation.
 
  + Seasonal oscillation:
-   $s(t) = \tanh(\gamma (\cos(\phi(t) + \beta_{c1}\cos(\phi(t)) + \beta_{s1}\sin(\phi(t))) + 1) / 2)$.
-   This represents the fluctuation in energy generation over the year, with the
-   $\tanh$ term capturing the way that the limit to the inverter output causes
-   this to saturate over the summer. The $\gamma$ parameter controls the
-   strength of this saturation. Furthermore, the sinusoidal basis and $\beta$
-   terms allow the shape of the underlying sinusoidal oscillation to be
-   tweaked.
+   $s(t) = (\cos(\phi(t) + \beta_{c1}\cos(\phi(t)) + \beta_{s1}\sin(\phi(t))) + 1) / 2$.
+   This is a dimensionless representation of the fluctuation in available
+   energy over the year. The sinusoidal basis and $\beta$ terms allow the shape
+   of the underlying sinusoidal oscillation to be tweaked.
 
- + Optimal production: $E_{opt}(t) = a + b s(t)$ where $a$ represents the
-   maximum possible production on the shortest day of the year, and $b$
-   represents the amplitude of the seasonal oscillation in kWh.
+ + Available energy: $E_{avail}(t) = a + b s(t)$ where $a$ represents the
+   maximum possible energy production from the panels on the shortest day of
+   the year, and $b$ represents the amplitude of the seasonal oscillation in
+   kWh. The maximum achievable production will be less than this due to the
+   limit to the power output from the inverter.
 
- + Weather effect: The proportion of the theoretical optimal production that is
-   actually achieved, $E(t) / E_{opt}(t)$. This takes a prior which is a
-   mixture of beta distributions, to capture clear sunny days separately from
-   those with cloud cover.
+ + Weather effect: $w(t)$ represents the proportion of the theoretical optimal
+   available energy that actually reaches the panels. This takes a prior which
+   is a mixture of beta distributions, to capture clear sunny days separately
+   from those with cloud cover.
+
+ + Realised production: $E(t) = \operatorname{sat}(w(t) E_{avail}(t))$. The
+   actual amount of energy generated is lower than the theoretical limit due to
+   both the weather effect and the inverter clipping power output. The latter
+   is modelled as
+   $\operatorname{sat}(e) = (-1 / \tau) \operatorname{LSE}(- \tau e, - \tau \gamma)$
+   where the LogSumExp function is used as a softmin of the incident energy and
+   a hard upper limit on production $\gamma$. The sharpness of the transition
+   between the linear and saturating regimes is governed by $\tau$.
+
+ + Optimal production: $E_{opt}(t) = \operatorname{sat}(E_{avail}(t))$
+   is a convenience representation of the above. It illustrates what production
+   would be achievable per day without weather effects.
 
 The plots below show the distributions over the key parameters.
 
@@ -95,29 +107,29 @@ production.
 <img src="figures/weather_effect.jpg" width="90%">
 </a>
 
-**Figure**: Proportion of the theoretical maximum daily energy production
-($`E(t) / E_{opt}(t)`$) actually achieved over the life of the system.
+**Figure**: Impact of the weather effect ($`w(t)`$) on production over the life
+of the system.
 
 ---------
 
-<a href="figures/seasonal_oscillation.pdf">
-<img src="figures/seasonal_oscillation.jpg" width="90%">
+<a href="figures/annual_variation.pdf">
+<img src="figures/annual_variation.jpg" width="90%">
 </a>
 
-**Figure**: Shape of the seasonal oscillation ($`s(t)`$) illustrating the
-fluctuation in the production curve over the year.
+**Figure**: Annual variation in available energy. This illustrates the
+fluctuation in the theoretical limits to production over the year.
 
 ---------
 
 <a href="figures/optimal_production_limits.pdf">
 <img src="figures/optimal_production_limits.jpg" width="45%">
 </a>
-<a href="figures/seasonal_oscillation_saturation.pdf">
-<img src="figures/seasonal_oscillation_saturation.jpg" width="45%">
+<a href="figures/annual_variation_saturation.pdf">
+<img src="figures/annual_variation_saturation.jpg" width="45%">
 </a>
 
-<a href="figures/seasonal_oscillation_peak_date.pdf">
-<img src="figures/seasonal_oscillation_peak_date.jpg" width="45%">
+<a href="figures/annual_variation_peak_date.pdf">
+<img src="figures/annual_variation_peak_date.jpg" width="45%">
 </a>
 <a href="figures/weather_effect_distribution.pdf">
 <img src="figures/weather_effect_distribution.jpg" width="45%">
@@ -125,13 +137,12 @@ fluctuation in the production curve over the year.
 
 **Figure**, **Top Left**: Posterior distribution over the maximum and minimum
 of the optimal production curve ($`E_{opt}(t)`$).
-**Top Right**: Posterior distribution over the saturation parameter
-($`\gamma`$) of the seasonal oscillation showing its correlation with the
-amplitude of this fluctuation ($`b`$).
+**Top Right**: Posterior distribution over the saturation limit
+($`\gamma`$) showing its correlation with the maximum available energy
+($`a + b`$).
 **Bottom Left**: Posterior distribution of the day of the year for which the
-theoretical maximum daily energy production peaks ($`\arg\max(s(t))`$).
-**Bottom Right**: Marginal posterior distribution of the proportion of the
-theoretical maximum daily energy production actually achieved
-($`E(t) / E_{opt}(t)`$) plotted against its prior.
+theoretical maximum daily energy production peaks ($`\arg\max(E_{opt}(t))`$).
+**Bottom Right**: Marginal posterior distribution of the weather effect
+($`w(t)`$) plotted against its prior.
 
 ---------

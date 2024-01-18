@@ -77,7 +77,7 @@ stan_fit = modelling.fit_model(df)
 
 figures = {
     **figures,
-    **plots.plot_seasonal_oscillation(df, stan_fit),
+    **plots.plot_annual_variation(df, stan_fit),
     **plots.plot_optimal_production(df, stan_fit),
     **plots.plot_weather_effect(df, stan_fit),
 }
@@ -110,12 +110,12 @@ plt.show()
 #         + p * scipy.stats.beta.pdf(x, 10.0, 1.0),
 #     )
 
-plt.figure()
-plt.hist(stan_fit["max"], bins=99)
-plt.figure()
-plt.hist(stan_fit["min"], bins=99)
-plt.figure()
-plt.hist(stan_fit["saturation"], bins=99)
+# plt.figure()
+# plt.hist(stan_fit["max"], bins=99)
+# plt.figure()
+# plt.hist(stan_fit["min"], bins=99)
+# plt.figure()
+# plt.hist(stan_fit["saturation"], bins=99)
 
 fig, ax = plt.subplots()
 ax.plot(stan_fit["beta_c1"], stan_fit["beta_s1"], ".")
@@ -136,7 +136,7 @@ ax.set_ylabel(r"$\beta_{s1}$")
 
 phase = (
     (365 * stan_fit.loc[:, "phase"] / (2 * math.pi))
-    .apply(lambda x: pd.to_datetime("2000-01-01") - pd.DateOffset(math.floor(x)))
+    .apply(lambda x: pd.to_datetime("2001-01-01") - pd.DateOffset(math.floor(x)))
     .value_counts()
 )
 fig, ax = plt.subplots()

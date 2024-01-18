@@ -48,61 +48,50 @@ def plot_raw_data(df):
 # -----------------------------------------------------------------------------
 
 
-def plot_seasonal_oscillation(df, stan_fit):
-    """Summarise the posterior over the seasonal oscillation in production."""
+def plot_annual_variation(df, stan_fit):
+    """Summarise the posterior over the seasonal fluctuation in production."""
 
     figures = {}
 
-    # Plot posterior draws against a pure sinusoid
-    proportion = np.linspace(0.0, 1.0, 1000)
-    theta = 2.0 * math.pi * proportion
-    dates = pd.to_datetime(365 * proportion, origin="2000-01-01", unit="D")
-    phase = (
-        theta[:, None]
-        + np.outer(np.cos(theta), stan_fit["beta_c1"])
-        + np.outer(np.sin(theta), stan_fit["beta_s1"])
-        + stan_fit["phase"].to_numpy()
+    # Plot posterior over energy curves for a year
+    dates = pd.to_datetime(np.arange(365), origin="2001-01-01", unit="D")
+    E_available = utilities.extract_posterior_timeseries(
+        "E_available_ref", dates, stan_fit
     )
-    normalised_samples = (
-        stan_fit["amplitude"].to_numpy()
-        * np.tanh(stan_fit["saturation"].to_numpy() * 0.5 * (1.0 + np.cos(phase)))
-        / stan_fit["amplitude"].mean()
-    )
-    pure_sinusoid = 0.5 * (1.0 + np.cos(theta + stan_fit["phase"].mean()))
+    E_optimal = utilities.extract_posterior_timeseries("E_optimal_ref", dates, stan_fit)
     # And make the plot
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
-    # Plot all the samples
-    ax.plot(dates, normalised_samples, color=[0.7] * 3, linewidth=0.2)
-    # Plot a random subset to highlight how these vary
+    # Plot a large proportion of the samples
     ax.plot(
         dates,
-        normalised_samples[
-            :, np.random.choice(normalised_samples.shape[1], 5, replace=False)
-        ],
+        E_optimal.sample(n=100, replace=False, axis="columns"),
+        color=[0.7] * 3,
+        linewidth=0.2,
+    )
+    # Plot a smaller random subset to highlight how these vary
+    ax.plot(
+        dates,
+        E_optimal.sample(n=5, replace=False, axis="columns"),
         color=[0.3] * 3,
         linewidth=0.5,
     )
     # Then the median over samples (illustrative only, doesn't account for
     # temporal dependencies)
-    ax.plot(
-        dates, np.median(normalised_samples, axis=1), "k", label=r"$(b / \bar{b}) s(t)$"
-    )
-    # And finally a pure sinusoid without any shape terms for comparison
-    ax.plot(dates, pure_sinusoid, "w", linewidth=3.0)
-    ax.plot(dates, pure_sinusoid, "tab:red", label=r"$\cos(\phi(t))$")
+    ax.plot(dates, E_optimal.median(axis="columns"), "k", label=r"$E_{opt}(t)$")
+    # And finally the available energy (i.e. without saturation) for comparison
+    ax.plot(dates, E_available.mean(axis="columns"), "w", linewidth=3.0)
+    ax.plot(dates, E_available.mean(axis="columns"), "tab:red", label=r"$E_{avail}(t)$")
     ax.set_xlim(dates[0], dates[-1])
     ax.xaxis.set_major_locator(mpl.dates.MonthLocator(bymonthday=15))
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%b"))
     ax.set_xlabel("Time of year")
-    ax.set_ylabel("Fluctuation in production")
+    ax.set_ylabel("Energy (kWh)")
     ax.legend()
     fig.autofmt_xdate()
-    figures["seasonal_oscillation"] = fig
+    figures["annual_variation"] = fig
 
     # Plot the date at which the maximum occurs
-    max_date_hist = (
-        dates[np.argmax(normalised_samples, axis=0)].round("D").value_counts()
-    )
+    max_date_hist = E_optimal.idxmax(axis="index").round("D").value_counts()
     # Wrap Jan to after December rather than at start of year
     max_date_hist.index = max_date_hist.index.map(
         lambda x: x + pd.DateOffset(years=(x.month <= 6))
@@ -110,18 +99,18 @@ def plot_seasonal_oscillation(df, stan_fit):
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.bar(max_date_hist.index, max_date_hist / len(stan_fit))
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
-    ax.set_xlabel(r"Date of peak production (argmax $s(t)$)")
+    ax.set_xlabel(r"Date of peak production (argmax $E_{opt}(t)$)")
     ax.set_ylabel("Probability density")
     fig.autofmt_xdate()
-    figures["seasonal_oscillation_peak_date"] = fig
+    figures["annual_variation_peak_date"] = fig
 
     # Plot saturation v amplitude
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
-    ax.plot(stan_fit["saturation"], stan_fit["amplitude"], ".")
+    ax.plot(stan_fit["saturation_limit"], stan_fit["amplitude"] + stan_fit["min"], ".")
     ax.grid(which="major", linestyle=":")
-    ax.set_xlabel(r"Saturation ($\gamma$)")
-    ax.set_ylabel(r"Amplitude ($b$)")
-    figures["seasonal_oscillation_saturation"] = fig
+    ax.set_xlabel(r"Saturation limit ($\gamma$, kWh)")
+    ax.set_ylabel(r"Maximum $E_{avail}(t)$ (kWh)")
+    figures["annual_variation_saturation"] = fig
 
     return figures
 
@@ -135,7 +124,7 @@ def plot_optimal_production(df, stan_fit):
     figures = {}
 
     optimal_production = utilities.extract_posterior_timeseries(
-        "optimal_production", df, stan_fit
+        "E_optimal", df.index, stan_fit
     )
 
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
@@ -144,27 +133,28 @@ def plot_optimal_production(df, stan_fit):
     # Distribution of optimal production over time
     ax.plot(
         optimal_production.index,
-        optimal_production,
+        optimal_production.sample(n=100, replace=False, axis="columns"),
         color=[0.7] * 3,
         linewidth=0.2,
     )
     ax.plot(
         optimal_production.index,
-        optimal_production.quantile([0.25, 0.75], axis=1).T,
+        optimal_production.quantile([0.25, 0.75], axis="columns").T,
         color=[0.4] * 3,
     )
     ax.plot(
         optimal_production.index,
-        optimal_production.median(axis=1),
+        optimal_production.median(axis="columns"),
         "tab:red",
     )
     ax.set_xlabel("Date")
-    ax.set_ylabel("Production (kWh)")
+    ax.set_ylabel(r"Production / $E_{opt}(t)$ (kWh)")
     fig.autofmt_xdate()
     figures["optimal_production"] = fig
 
+    # Posterior over min/max
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
-    ax.plot(stan_fit["min"], stan_fit["max"], ".")
+    ax.plot(stan_fit["E_optimal_min"], stan_fit["E_optimal_max"], ".")
     ax.axis("equal")
     ax.grid(which="major", linestyle=":")
     ax.set_xlabel(r"Minimum $E_{opt}(t)$ (kWh)")
@@ -183,7 +173,7 @@ def plot_weather_effect(df, stan_fit):
     figures = {}
 
     weather_effect = utilities.extract_posterior_timeseries(
-        "weather_effect", df, stan_fit
+        "weather_effect", df.index, stan_fit
     )
     offset_in_year = utilities.date_to_offset_in_year(weather_effect.index)
 
@@ -191,10 +181,10 @@ def plot_weather_effect(df, stan_fit):
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
     ax.bar(
         weather_effect.index,
-        weather_effect.median(axis=1),
+        weather_effect.median(axis="columns"),
         yerr=(
-            weather_effect.median(axis=1)
-            - weather_effect.quantile([0.25, 0.75], axis=1)
+            weather_effect.median(axis="columns")
+            - weather_effect.quantile([0.25, 0.75], axis="columns")
         ).abs(),
     )
     # Plot the seasonality as a sinusoid
@@ -216,8 +206,9 @@ def plot_weather_effect(df, stan_fit):
     )
     # Labels etc.
     ax.set_xlabel("Date")
-    ax.set_ylabel("Weather effect")
-    ax.legend()
+    ax.set_ylabel(r"Weather effect ($w(t)$)")
+    ax.grid(which="major", axis="y")
+    ax.legend(loc="lower left")
     fig.autofmt_xdate()
     ax.set_ylim(0.0, 1.0)
     figures["weather_effect"] = fig
@@ -239,7 +230,7 @@ def plot_weather_effect(df, stan_fit):
         + p * scipy.stats.beta.pdf(x, 15.0, 2.0),
         label="Prior",
     )
-    ax.set_xlabel("Weather effect")
+    ax.set_ylabel(r"Weather effect ($w(t)$)")
     ax.set_ylabel("Probability density")
     ax.legend()
     figures["weather_effect_distribution"] = fig
