@@ -100,7 +100,7 @@ def plot_annual_variation(df, stan_fit):
     ax.bar(max_date_hist.index, max_date_hist / len(stan_fit))
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
     ax.set_xlabel(r"Date of peak production (argmax $E_{opt}(t)$)")
-    ax.set_ylabel("Probability density")
+    ax.set_ylabel("Probability")
     fig.autofmt_xdate()
     figures["annual_variation_peak_date"] = fig
 
