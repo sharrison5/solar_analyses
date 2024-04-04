@@ -25,7 +25,7 @@ tabulated below, as well as a plot of the recorded daily output.
 |:--------|------------------:|-----------------:|
 | Jan     |               805 |              987 |
 | Feb     |               731 |              824 |
-| Mar     |               568 |              699 |
+| Mar     |               568 |              714 |
 | Apr     |               401 |              535 |
 | May     |               251 |              365 |
 | Jun     |               183 |              311 |
