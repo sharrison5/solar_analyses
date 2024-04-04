@@ -77,6 +77,9 @@ transformed data {
   for (i in 1:365) {
     t_year_ref[i] = (i - 1) / 365.0;
   }
+
+  // Minimum value of the limit parameter controlling inverter clipping
+  real saturation_limit_baseline = 50.0;
 }
 
 // ----------------------------------------------------------------------------
@@ -94,7 +97,7 @@ parameters {
   real beta_c1, beta_s1;
 
   // Parameters describing how much inverter limit causes clipping of production
-  real<lower=0> saturation_limit;
+  real<lower=0> saturation_limit_increase;
   real<lower=0> saturation_smoothness;
 }
 
@@ -110,6 +113,8 @@ transformed parameters {
   // Daily variables describing the factor by which clouds etc. reduced
   // energy generation
   // production = saturation(weather-effect * E_available)
+  real<lower=0> saturation_limit
+    = saturation_limit_baseline + saturation_limit_increase;
   vector[N] weather_effect
     = inv_saturation(
       production,
@@ -124,8 +129,8 @@ model {
   // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
   min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
   amplitude ~ gamma(64.0, 1.6); // m: 40, v: 5^2
-  saturation_limit ~ gamma(100.0, 2.0); // m: 50, v: 5^2
-  saturation_smoothness ~ gamma(25.0, 5.0); // m: 5, v: 1^2
+  saturation_limit_increase ~ gamma(0.25, 0.25); // m: 1, v: 2^2
+  saturation_smoothness ~ gamma(25.0, 2.5); // m: 10, v: 2^2
 
   // Normal
   beta_c1 ~ normal(0.0, 0.25); // m: 0, s: 0.5

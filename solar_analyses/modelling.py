@@ -48,7 +48,7 @@ def fit_model(df):
                 "min": 20.0,
                 "amplitude": 40.0,
                 "phase": 0.17,
-                "saturation_limit": 50.0,
+                "saturation_limit_increase": 1.0,
                 "saturation_smoothness": 5.0,
                 "beta_c1": 0.0,
                 "beta_s1": 0.0,
