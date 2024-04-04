@@ -73,7 +73,7 @@ sketch of the key components of the model:
 
  + Weather effect: $w(t)$ represents the proportion of the theoretical optimal
    available energy that actually reaches the panels. This takes a prior which
-   is a mixture of beta distributions, to capture clear sunny days separately
+   is a mixture of gamma distributions, to capture clear sunny days separately
    from those with cloud cover.
 
  + Realised production: $E(t) = \mathop{\text{sat}}(w(t) E_{avail}(t))$. The

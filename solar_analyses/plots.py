@@ -217,17 +217,17 @@ def plot_weather_effect(df, stan_fit):
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.hist(
         weather_effect.stack(),
-        bins=np.linspace(0.0, 1.0, 50),
+        bins=np.linspace(0.0, 1.2, 50),
         density=True,
         rwidth=0.9,
         label="Posterior samples",
     )
-    x = np.linspace(0.0001, 0.9999, 500)
-    p = 0.25
+    x = np.linspace(0.0, 1.2, 500)
+    p = 0.15
     ax.plot(
         x,
-        (1.0 - p) * scipy.stats.beta.pdf(x, 2.0, 2.0)
-        + p * scipy.stats.beta.pdf(x, 15.0, 2.0),
+        (1.0 - p) * scipy.stats.gamma.pdf(x, 5.0, 0.0, 1.0 / 8.0)
+        + p * scipy.stats.gamma.pdf(x, 180.0, 0.0, 1.0 / 200.0),
         label="Prior",
     )
     ax.set_ylabel(r"Weather effect ($w(t)$)")

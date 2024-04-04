@@ -129,7 +129,7 @@ model {
   // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
   min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
   amplitude ~ gamma(64.0, 1.6); // m: 40, v: 5^2
-  saturation_limit_increase ~ gamma(0.25, 0.25); // m: 1, v: 2^2
+  saturation_limit_increase ~ gamma(1.0, 1.0); // m: 1, v: 1^2
   saturation_smoothness ~ gamma(25.0, 2.5); // m: 10, v: 2^2
 
   // Normal
@@ -140,12 +140,12 @@ model {
   // Summer solstice ≈10 days from end of year
   phase ~ von_mises(0.17, 135.0); // m=2*pi*(10/365), v=(2*pi*(5/365))**2
 
-  // Beta: m = a / (a + b)
-  real lambda = 0.25;
+  // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
+  real lambda = 0.15;
   for (n in 1:N) {
     target += log_sum_exp(
-      log1m(lambda) + beta_lpdf(weather_effect[n] | 2.0, 2.0),
-      log(lambda) + beta_lpdf(weather_effect[n] | 15.0, 2.0)
+      log1m(lambda) + gamma_lpdf(weather_effect[n] | 5.0, 8.0), // m: 0.625, v: 0.28^2
+      log(lambda) + gamma_lpdf(weather_effect[n] | 180.0, 200.0) // m: 0.9, v: 0.067^2
     );
   };
 }
