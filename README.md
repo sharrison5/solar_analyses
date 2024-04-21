@@ -103,15 +103,6 @@ production.
 
 ---------
 
-<a href="figures/weather_effect.pdf">
-<img src="figures/weather_effect.jpg" width="90%">
-</a>
-
-**Figure**: Impact of the weather effect ($`w(t)`$) on production over the life
-of the system.
-
----------
-
 <a href="figures/annual_variation.pdf">
 <img src="figures/annual_variation.jpg" width="90%">
 </a>
@@ -131,18 +122,45 @@ fluctuation in the theoretical limits to production over the year.
 <a href="figures/annual_variation_peak_date.pdf">
 <img src="figures/annual_variation_peak_date.jpg" width="45%">
 </a>
-<a href="figures/weather_effect_distribution.pdf">
-<img src="figures/weather_effect_distribution.jpg" width="45%">
+<a href="figures/annual_variation_betas.pdf">
+<img src="figures/annual_variation_betas.jpg" width="45%">
 </a>
 
-**Figure**, **Top Left**: Posterior distribution over the maximum and minimum
+**Figure**: Parameters controlling the optimal production curve
+($`E_{opt}(t)`$).
+**Top Left**: Posterior distribution over the maximum and minimum
 of the optimal production curve ($`E_{opt}(t)`$).
 **Top Right**: Posterior distribution over the saturation limit
 ($`\gamma`$) showing its correlation with the maximum available energy
 ($`a + b`$).
 **Bottom Left**: Posterior distribution of the day of the year for which the
 theoretical maximum daily energy production peaks ($`\arg\max(E_{opt}(t))`$).
-**Bottom Right**: Marginal posterior distribution of the weather effect
+**Bottom Right**: Posterior distribution of the $\beta$ terms that modulate the
+shape of the sinusoid that the seasonal oscillation ($`s(t)`$) curve is based
+on.
+
+---------
+
+<a href="figures/weather_effect.pdf">
+<img src="figures/weather_effect.jpg" width="90%">
+</a>
+
+**Figure**: Impact of the weather effect ($`w(t)`$) on production over the life
+of the system.
+
+---------
+
+<a href="figures/weather_effect_distribution.pdf">
+<img src="figures/weather_effect_distribution.jpg" width="45%">
+</a>
+<a href="figures/weather_effect_autocorr.pdf">
+<img src="figures/weather_effect_autocorr.jpg" width="45%">
+</a>
+
+**Figure**: Structure of the posterior over the weather effect terms.
+**Left**: Marginal posterior distribution of the weather effect
 ($`w(t)`$) plotted against its prior.
+**Right**: Autocorrelation of the posterior weather effect parameters
+($`w(t)`$) over time.
 
 ---------
