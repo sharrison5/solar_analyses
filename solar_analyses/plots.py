@@ -230,10 +230,43 @@ def plot_weather_effect(df, stan_fit):
         + p * scipy.stats.gamma.pdf(x, 180.0, 0.0, 1.0 / 200.0),
         label="Prior",
     )
-    ax.set_ylabel(r"Weather effect ($w(t)$)")
+    ax.set_xlabel(r"Weather effect ($w(t)$)")
     ax.set_ylabel("Probability density")
     ax.legend()
     figures["weather_effect_distribution"] = fig
+
+    # Autocorrelation
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
+    lags = np.arange(0, 20)
+    autocorr = pd.DataFrame(
+        [weather_effect.apply(lambda s: s.autocorr(lag), axis="rows") for lag in lags],
+        index=lags,
+    )
+    # Null
+    # https://en.wikipedia.org/wiki/Pearson_correlation_coefficient#Testing_using_Student's_t-distribution
+    n = weather_effect.shape[0]
+    t = scipy.stats.t.ppf([0.025, 0.975], df=n - 2)
+    null = t / np.sqrt(n - 2 + t**2)
+    ax.axhline(null[0], c="k", ls="--", label="Null (95% CI)")
+    ax.axhline(null[1], c="k", ls="--")
+    # 95% CI over samples
+    quantiles = autocorr.quantile([0.025, 0.975], axis="columns")
+    ax.fill_between(
+        lags,
+        quantiles.iloc[0],
+        quantiles.iloc[1],
+        alpha=0.2,
+        label="95% CI over samples",
+    )
+    # Then the median over samples (illustrative only, doesn't account for
+    # temporal dependencies)
+    ax.plot(lags, autocorr.median(axis="columns"), label="Median over samples")
+    ax.xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
+    ax.grid(which="major", linestyle=":")
+    ax.set_ylabel(r"Autocorrelation of weather effect ($w(t)$)")
+    ax.set_xlabel("Lag (days)")
+    ax.legend()
+    figures["weather_effect_autocorr"] = fig
 
     return figures
 
