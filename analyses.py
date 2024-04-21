@@ -117,13 +117,6 @@ plt.show()
 # plt.figure()
 # plt.hist(stan_fit["saturation"], bins=99)
 
-fig, ax = plt.subplots()
-ax.plot(stan_fit["beta_c1"], stan_fit["beta_s1"], ".")
-ax.axis("equal")
-ax.grid(which="major", linestyle=":")
-ax.set_xlabel(r"$\beta_{c1}$")
-ax.set_ylabel(r"$\beta_{s1}$")
-
 # fig, ax = plt.subplots()
 # plt.plot(
 #     stan_fit.loc[:, stan_fit.columns.str.startswith("weather_effect")]

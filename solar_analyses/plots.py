@@ -112,6 +112,17 @@ def plot_annual_variation(df, stan_fit):
     ax.set_ylabel(r"Maximum $E_{avail}(t)$ (kWh)")
     figures["annual_variation_saturation"] = fig
 
+    # Plot beta coefficients modulating sine shape
+    fig, ax = plt.subplots(figsize=[5.0, 4.0])
+    ax.axhline(0.0, c="k", ls="--")
+    ax.axvline(0.0, c="k", ls="--")
+    ax.plot(stan_fit["beta_c1"], stan_fit["beta_s1"], ".")
+    ax.axis("equal")
+    ax.grid(which="major", linestyle=":")
+    ax.set_xlabel(r"$\beta_{c1}$")
+    ax.set_ylabel(r"$\beta_{s1}$")
+    figures["annual_variation_betas"] = fig
+
     return figures
 
 
