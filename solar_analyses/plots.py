@@ -210,19 +210,19 @@ def plot_weather_effect(df, stan_fit):
     ax.grid(which="major", axis="y")
     ax.legend(loc="lower left")
     fig.autofmt_xdate()
-    ax.set_ylim(0.0, 1.0)
+    ax.set_ylim(0.0, 1.1)
     figures["weather_effect"] = fig
 
     # Compare marginal distribution to prior
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.hist(
         weather_effect.stack(),
-        bins=np.linspace(0.0, 1.2, 50),
+        bins=np.linspace(0.0, 1.1, 50),
         density=True,
         rwidth=0.9,
         label="Posterior samples",
     )
-    x = np.linspace(0.0, 1.2, 500)
+    x = np.linspace(0.0, 1.1, 500)
     p = 0.15
     ax.plot(
         x,
