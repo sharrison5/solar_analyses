@@ -127,10 +127,13 @@ transformed parameters {
 
 model {
   // Gamma: m = a/b, v = a/b^2 --> a = m^2/v, b = m/v
-  min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
+  // This will be approximately normal as the shape parameter increases
+  // https://stats.stackexchange.com/a/497002
+  // I.e. 95% of the probability mass will be +/- 2 std
+  min ~ gamma(64.0, 3.2); // m: 20, v: 2.5^2
   amplitude ~ gamma(64.0, 1.6); // m: 40, v: 5^2
   saturation_limit_increase ~ gamma(1.0, 1.0); // m: 1, v: 1^2
-  saturation_smoothness ~ gamma(25.0, 2.5); // m: 10, v: 2^2
+  saturation_smoothness ~ gamma(25.0, 3.3); // m: 7.5, v: 1.5^2
 
   // Normal
   beta_c1 ~ normal(0.0, 0.25); // m: 0, s: 0.5
