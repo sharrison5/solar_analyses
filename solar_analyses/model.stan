@@ -17,31 +17,26 @@
 // ----------------------------------------------------------------------------
 
 functions {
-  // Models the saturation as the softmin of the input (i.e. a linear region)
-  // and a hard upper limit.
-  // https://en.wikipedia.org/wiki/LogSumExp
-  vector saturation(vector E, real limit, real smoothness){
-    real sharpness = 1.0 / smoothness;
-    vector[size(E)] E_sat;
-    for (i in 1:size(E)) {
-      E_sat[i] = (-1.0 / sharpness) * log_sum_exp(
-        - sharpness * E[i],
-        - sharpness * limit
-      );
-    }
-    return E_sat;
+  // Models the saturation as tanh of the input, with a tunable sharpness
+  // parameter (between 0 and 1) that determines how quickly the function
+  // transitions from the approximately linear region to the saturated region.
+  vector saturation(vector E, real limit, real sharpness){
+    // Equation: f(x) = a * tanh(b * sinh(x / b) / a)
+    // a represents the limit at which the function saturates, and for small
+    // values of b the sinh term causes the saturation to happen earlier. We
+    // want f(0) = 0, f(x) < x, f'(x) <= 1, f'(0) = 1 (i.e. starts linear and
+    // progressively drops off, as per tanh). For small b the sinh term
+    // dominates and f(x) can rise above x before saturating. To prevent this
+    // we limit b. The critical value isn't trivial to derive, but the way to
+    // do it is to only allow functions where f'''(x) < 0 (i.e. f'(x) is a
+    // maximum at 0). This leads to the key equality a / b < sqrt(2).
+    real smoothness = limit / (sqrt2() * sharpness);
+    return limit * tanh(smoothness * sinh(E / smoothness) / limit);
   }
 
-  vector inv_saturation(vector E_sat, real limit, real smoothness){
-    real sharpness = 1.0 / smoothness;
-    vector[size(E_sat)] E;
-    for (i in 1:size(E_sat)) {
-      E[i] = (-1.0 / sharpness) * log_diff_exp(
-        - sharpness * E_sat[i],
-        - sharpness * limit
-      );
-    }
-    return E;
+  vector inv_saturation(vector E_sat, real limit, real sharpness){
+    real smoothness = limit / (sqrt2() * sharpness);
+    return smoothness * asinh(limit * atanh(E_sat / limit) / smoothness);
   }
 
   vector instantaneous_phase(vector t_year, real phase) {
@@ -98,7 +93,7 @@ parameters {
 
   // Parameters describing how much inverter limit causes clipping of production
   real<lower=0> saturation_limit_increase;
-  real<lower=0> saturation_smoothness;
+  real<lower=0, upper=1> saturation_sharpness;
 }
 
 // ----------------------------------------------------------------------------
@@ -112,14 +107,14 @@ transformed parameters {
 
   // Daily variables describing the factor by which clouds etc. reduced
   // energy generation
-  // production = saturation(weather-effect * E_available)
+  // production = saturation(weather_effect * E_available)
   real<lower=0> saturation_limit
     = saturation_limit_baseline + saturation_limit_increase;
   vector[N] weather_effect
     = inv_saturation(
       production,
       saturation_limit,
-      saturation_smoothness
+      saturation_sharpness
     ) ./ E_available;
 }
 
@@ -130,10 +125,11 @@ model {
   // This will be approximately normal as the shape parameter increases
   // https://stats.stackexchange.com/a/497002
   // I.e. 95% of the probability mass will be +/- 2 std
-  min ~ gamma(64.0, 3.2); // m: 20, v: 2.5^2
+  min ~ gamma(16.0, 0.8); // m: 20, v: 5^2
   amplitude ~ gamma(64.0, 1.6); // m: 40, v: 5^2
   saturation_limit_increase ~ gamma(1.0, 1.0); // m: 1, v: 1^2
-  saturation_smoothness ~ gamma(25.0, 3.3); // m: 7.5, v: 1.5^2
+  // Beta: m = a / (a + b)
+  saturation_sharpness ~ beta(1.0, 1.0); // m: 0.5
 
   // Normal
   beta_c1 ~ normal(0.0, 0.25); // m: 0, s: 0.5
@@ -162,7 +158,7 @@ generated quantities {
     = saturation(
       E_available,
       saturation_limit,
-      saturation_smoothness
+      saturation_sharpness
     );
 
   // Max/min optimal production (cloudless longest/shortest day)
@@ -171,13 +167,13 @@ generated quantities {
     = saturation(
       [min + amplitude]',
       saturation_limit,
-      saturation_smoothness
+      saturation_sharpness
     )[1];
   real E_optimal_min
     = saturation(
       [min]',
       saturation_limit,
-      saturation_smoothness
+      saturation_sharpness
     )[1];
 
   // Versions of the above for the timeseries of the reference year
@@ -189,7 +185,7 @@ generated quantities {
     = saturation(
       E_available_ref,
       saturation_limit,
-      saturation_smoothness
+      saturation_sharpness
     );
 }
 
