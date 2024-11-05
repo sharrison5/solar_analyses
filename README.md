@@ -150,6 +150,10 @@ of the system.
 
 ---------
 
+<a href="figures/weather_effect_monthly.pdf">
+<img src="figures/weather_effect_monthly.jpg" width="90%">
+</a>
+
 <a href="figures/weather_effect_distribution.pdf">
 <img src="figures/weather_effect_distribution.jpg" width="45%">
 </a>
@@ -158,9 +162,12 @@ of the system.
 </a>
 
 **Figure**: Structure of the posterior over the weather effect terms.
-**Left**: Marginal posterior distribution of the weather effect
+**Top**: Posterior distribution of the weather effect ($`w(t)`$) aggregated by
+month. The sinusoidal best fit to the median, and first and third quartiles, is
+shown to highlight any seasonal fluctuations.
+**Bottom left**: Marginal posterior distribution of the weather effect
 ($`w(t)`$) plotted against its prior.
-**Right**: Autocorrelation of the posterior weather effect parameters
+**Bottom right**: Autocorrelation of the posterior weather effect parameters
 ($`w(t)`$) over time.
 
 ---------

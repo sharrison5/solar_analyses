@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import calendar
 import math
 import matplotlib as mpl, matplotlib.pyplot as plt
 import numpy as np
@@ -223,6 +224,52 @@ def plot_weather_effect(df, stan_fit):
     fig.autofmt_xdate()
     ax.set_ylim(0.0, 1.1)
     figures["weather_effect"] = fig
+
+    # Plot weather effect over time, binned by month
+    monthly_weather_effect = (
+        weather_effect.groupby(by=lambda x: x.month)
+        .agg(list)
+        .agg(lambda x: sum(x, []), axis="columns")
+    )
+    positions = monthly_weather_effect.index
+    # Make a boxplot with the raw data
+    fig, ax = plt.subplots(figsize=[8.0, 4.0])
+    props = {"color": [0.7] * 3}
+    bplot = ax.boxplot(
+        monthly_weather_effect,
+        positions=positions,
+        patch_artist=True,
+        boxprops={**props},
+        capprops={**props},
+        whiskerprops={**props},
+        medianprops={"color": "k", "linewidth": 2.0},
+    )
+    for patch in bplot["boxes"]:
+        patch.set_facecolor([0.9] * 3)
+    # Plot the seasonality as a sinusoid fit to the median and IQR
+    quantiles = np.stack(
+        monthly_weather_effect.transform(
+            lambda x: np.quantile(x, [0.25, 0.5, 0.75])
+        ).to_numpy()
+    )
+    low_res_basis = np.stack(
+        [np.sin(positions), np.cos(positions), np.ones_like(positions)]
+    )
+    high_res_positions = np.linspace(positions[0] - 0.5, positions[-1] + 0.5, 100)
+    high_res_basis = np.stack(
+        [
+            np.sin(high_res_positions),
+            np.cos(high_res_positions),
+            np.ones_like(high_res_positions),
+        ]
+    )
+    fit = high_res_basis.T @ np.linalg.pinv(low_res_basis.T) @ quantiles
+    ax.plot(high_res_positions, fit, linewidth=2)
+    # Labels etc.
+    ax.set_xticks(positions, [calendar.month_abbr[p] for p in positions])
+    ax.set_xlabel("Month")
+    ax.set_ylabel(r"Weather effect ($w(t)$)")
+    figures["weather_effect_monthly"] = fig
 
     # Compare marginal distribution to prior
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
