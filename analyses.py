@@ -18,8 +18,8 @@
 # limitations under the License.
 
 import math
-import matplotlib as mpl, matplotlib.pyplot as plt
-import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 
