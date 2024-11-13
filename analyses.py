@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env uv run
 # -*- coding: utf-8 -*-
 
 # SPDX-License-Identifier: Apache-2.0

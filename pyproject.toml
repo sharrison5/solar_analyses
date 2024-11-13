@@ -1,0 +1,27 @@
+[project]
+name = "solar_analyses"
+version = "0.1.0"
+description = "An analysis of the energy production of an installed solar system."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.9.2",
+    "numpy>=1.26.4",
+    "pandas>=2.2.3",
+    "pystan>=3.7.0",
+    "scipy>=1.14.1",
+    "tabulate>=0.9.0",
+]
+
+[project.urls]
+Repository = "https://github.com/sharrison5/solar_analyses"
+
+[tool.uv]
+python-preference = "only-managed"
+
+[dependency-groups]
+dev = [
+    "ipython>=8.29.0",
+    "pre-commit>=4.0.1",
+    "ruff==0.7.3",
+]
