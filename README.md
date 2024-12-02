@@ -33,7 +33,7 @@ tabulated below, as well as a plot of the recorded daily output.
 | Aug     |               330 |              502 |
 | Sep     |               516 |              611 |
 | Oct     |               687 |              782 |
-| Nov     |               827 |              836 |
+| Nov     |               827 |              864 |
 | Dec     |               786 |              889 |
 
 ---------
