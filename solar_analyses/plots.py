@@ -253,19 +253,21 @@ def plot_weather_effect(df, stan_fit):
             lambda x: np.quantile(x, [0.25, 0.5, 0.75])
         ).to_numpy()
     )
-    low_res_basis = np.stack(
-        [np.sin(positions), np.cos(positions), np.ones_like(positions)]
-    )
+
+    def basis(positions):
+        return np.stack(
+            [
+                np.sin(2.0 * math.pi * positions / 12),
+                np.cos(2.0 * math.pi * positions / 12),
+                np.ones_like(positions),
+            ]
+        )
+
     high_res_positions = np.linspace(positions[0] - 0.5, positions[-1] + 0.5, 100)
-    high_res_basis = np.stack(
-        [
-            np.sin(high_res_positions),
-            np.cos(high_res_positions),
-            np.ones_like(high_res_positions),
-        ]
+    high_res_fit = (
+        basis(high_res_positions).T @ np.linalg.pinv(basis(positions).T) @ quantiles
     )
-    fit = high_res_basis.T @ np.linalg.pinv(low_res_basis.T) @ quantiles
-    ax.plot(high_res_positions, fit, linewidth=2)
+    ax.plot(high_res_positions, high_res_fit, linewidth=2)
     # Labels etc.
     ax.set_xticks(positions, [calendar.month_abbr[p] for p in positions])
     ax.set_xlabel("Month")
