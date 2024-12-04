@@ -249,9 +249,10 @@ def plot_weather_effect(df, stan_fit):
         patch.set_facecolor([0.9] * 3)
     # Plot the seasonality as a sinusoid fit to the median and IQR
     quantiles = np.stack(
-        monthly_weather_effect.transform(
-            lambda x: np.quantile(x, [0.25, 0.5, 0.75])
-        ).to_numpy()
+        [
+            np.quantile(values, [0.25, 0.5, 0.75])
+            for _, values in monthly_weather_effect.items()
+        ]
     )
 
     def basis(positions):
