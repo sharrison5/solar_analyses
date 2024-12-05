@@ -49,18 +49,17 @@ def date_to_offset_in_year(dates):
 def extract_posterior_timeseries(parameter, dates, stan_fit):
     """Extract a posterior timeseries into a properly indexed DataFrame."""
 
-    # Extract relevant columns
-    ts = stan_fit.loc[:, stan_fit.columns.str.startswith(f"{parameter}.")]
-    # Convert "parameter.1", "parameter.2", etc. to numbers and sort
-    ts = ts.rename(columns=lambda x: x.replace(f"{parameter}.", ""))
-    ts.columns = ts.columns.astype(int)
-    ts = ts.reindex(sorted(ts.columns), axis="columns")
-    # Replace with real dates
-    ts.columns = dates
-    # And reshape!
-    ts = ts.transpose()
-
-    return ts
+    return (
+        # Extract relevant columns
+        stan_fit.loc[:, stan_fit.columns.str.startswith(f"{parameter}.")]
+        # Convert "parameter.1", "parameter.2", etc. to numbers and sort
+        .rename(columns=lambda x: x.replace(f"{parameter}.", ""))
+        .sort_index(key=lambda x: x.astype(int), axis="columns")
+        # Flip to [date, sample] orientation
+        .transpose()
+        # And replace with real dates
+        .set_axis(dates, axis="index")
+    )
 
 
 # -----------------------------------------------------------------------------
