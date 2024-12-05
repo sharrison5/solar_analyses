@@ -206,9 +206,7 @@ def plot_weather_effect(df, stan_fit):
     ax.plot(weather_effect.index, seasonality, "tab:red", label=r"$\cos(2 \pi p(t))$")
     # Add rolling averages
     fortnightly_average = (
-        weather_effect.rolling(window=14, center=True, axis="index")
-        .mean()
-        .median(axis="columns")
+        weather_effect.rolling(window=14, center=True).mean().median(axis="columns")
     )
     ax.plot(weather_effect.index, fortnightly_average, "w", linewidth=4.0)
     ax.plot(
