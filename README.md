@@ -18,23 +18,23 @@ All figures are clickable links to higher quality versions.
 
 ### Raw data
 
-The average monthly output (as compared to the predictions as quoted) are
-tabulated below, as well as a plot of the recorded daily output.
+The monthly outputs (as compared to the predictions as quoted) are tabulated
+below, as well as a plot of the recorded daily output.
 
-| Month   |   Predicted (kWh) |   Observed (kWh) |
-|:--------|------------------:|-----------------:|
-| Jan     |               805 |             1011 |
-| Feb     |               731 |              824 |
-| Mar     |               568 |              714 |
-| Apr     |               401 |              504 |
-| May     |               251 |              360 |
-| Jun     |               183 |              289 |
-| Jul     |               238 |              319 |
-| Aug     |               330 |              502 |
-| Sep     |               516 |              611 |
-| Oct     |               687 |              782 |
-| Nov     |               827 |              864 |
-| Dec     |               786 |              883 |
+| Month   |   Predicted (kWh) |   Min (kWh) |   Mean (kWh) |   Max (kWh) |
+|:--------|------------------:|------------:|-------------:|------------:|
+| Jan     |               805 |         927 |         1011 |        1058 |
+| Feb     |               731 |         780 |          824 |         867 |
+| Mar     |               568 |         699 |          714 |         729 |
+| Apr     |               401 |         472 |          504 |         535 |
+| May     |               251 |         355 |          360 |         365 |
+| Jun     |               183 |         266 |          289 |         311 |
+| Jul     |               238 |         311 |          319 |         327 |
+| Aug     |               330 |         473 |          502 |         530 |
+| Sep     |               516 |         599 |          611 |         623 |
+| Oct     |               687 |         727 |          782 |         837 |
+| Nov     |               827 |         836 |          864 |         892 |
+| Dec     |               786 |         877 |          883 |         889 |
 
 ---------
 

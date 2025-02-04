@@ -28,7 +28,6 @@ def compare_with_predictions(observations, predictions):
 
     observations = (
         observations[["Total production"]]
-        .rename(columns={"Total production": "Observed (kWh)"})
         # Pull out some useful extra columns
         .assign(Month=lambda x: x.index.strftime("%b"), Year=lambda x: x.index.year)
         # Exclude early incomplete data
@@ -36,13 +35,22 @@ def compare_with_predictions(observations, predictions):
         # Get the total for each month
         .groupby(["Year", "Month"])
         .aggregate("sum")
-        # And average over each year
+        # And collect statistics for each month, over the different years
         .groupby("Month")
-        .aggregate("mean")
+        .aggregate(["min", "mean", "max"])
+        # Tidy up column names
+        .droplevel(0, axis="columns")
+        .rename(
+            columns={
+                "min": "Min (kWh)",
+                "mean": "Mean (kWh)",
+                "max": "Max (kWh)",
+            }
+        )
     )
 
     # And combine!
-    df = pd.merge(predictions, observations, left_index=True, right_index=True)
+    df = pd.concat([predictions, observations], axis="columns")
     return df
 
 
