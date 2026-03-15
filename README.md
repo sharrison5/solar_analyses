@@ -24,7 +24,7 @@ below, as well as a plot of the recorded daily output.
 | Month   |   Predicted (kWh) |   Min (kWh) |   Mean (kWh) |   Max (kWh) |
 |:--------|------------------:|------------:|-------------:|------------:|
 | Jan     |               805 |         802 |          959 |        1058 |
-| Feb     |               731 |         780 |          838 |         868 |
+| Feb     |               731 |         780 |          825 |         868 |
 | Mar     |               568 |         699 |          712 |         729 |
 | Apr     |               401 |         472 |          511 |         535 |
 | May     |               251 |         355 |          363 |         368 |
