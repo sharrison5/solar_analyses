@@ -17,8 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import math
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
@@ -88,56 +86,6 @@ figures = {
 for name, fig in figures.items():
     for extension in ["jpg", "pdf"]:
         fig.savefig(figure_dir / (name + "." + extension))
-
-plt.show()
-
-# -----------------------------------------------------------------------------
-# Prototype code
-
-# for n in range(10):
-#     plt.figure()
-#     plt.hist(
-#         stan_fit.loc[n, stan_fit.columns.str.startswith("weather_effect")],
-#         bins=25,
-#         density=True,
-#         rwidth=0.9,
-#     )
-#     x = np.linspace(0.0001, 0.9999, 500)
-#     p = 0.25
-#     plt.plot(
-#         x,
-#         (1.0 - p) * scipy.stats.beta.pdf(x, 2.0, 2.0)
-#         + p * scipy.stats.beta.pdf(x, 10.0, 1.0),
-#     )
-
-# plt.figure()
-# plt.hist(stan_fit["max"], bins=99)
-# plt.figure()
-# plt.hist(stan_fit["min"], bins=99)
-# plt.figure()
-# plt.hist(stan_fit["saturation"], bins=99)
-
-# fig, ax = plt.subplots()
-# plt.plot(
-#     stan_fit.loc[:, stan_fit.columns.str.startswith("weather_effect")]
-#     .to_numpy()
-#     .flatten(),
-#     stan_fit.loc[:, stan_fit.columns.str.startswith("lambda")].to_numpy().flatten(),
-#     ".",
-#     markersize=2,
-# )
-
-phase = (
-    (365 * stan_fit.loc[:, "phase"] / (2 * math.pi))
-    .apply(lambda x: pd.to_datetime("2001-01-01") - pd.DateOffset(math.floor(x)))
-    .value_counts()
-)
-fig, ax = plt.subplots()
-ax.bar(phase.index, phase / len(stan_fit))
-ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
-ax.set_xlabel(r"Phase ($\delta$)")
-ax.set_ylabel("Probability density")
-fig.autofmt_xdate()
 
 plt.show()
 

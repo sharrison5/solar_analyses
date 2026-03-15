@@ -99,7 +99,7 @@ def plot_annual_variation(df, stan_fit):
         lambda x: x + pd.DateOffset(years=(x.month <= 6))
     )
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
-    ax.bar(max_date_hist.index, max_date_hist / len(stan_fit))
+    ax.bar(max_date_hist.index, max_date_hist / sum(max_date_hist))
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
     ax.set_xlabel(r"Date of peak production (argmax $E_{opt}(t)$)")
     ax.set_ylabel("Probability")

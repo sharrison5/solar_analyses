@@ -171,3 +171,10 @@ shown to highlight any seasonal fluctuations.
 ($`w(t)`$) over time.
 
 ---------
+
+### Running the code
+
+```console
+uv run install_cmdstan -d .cmdstan
+CMDSTAN=.cmdstan/cmdstan-2.38.0 uv run analyses.py
+```

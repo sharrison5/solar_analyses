@@ -17,7 +17,7 @@
 # limitations under the License.
 
 from pathlib import Path
-import stan
+from cmdstanpy import CmdStanModel
 
 from solar_analyses import utilities
 
@@ -33,29 +33,26 @@ def fit_model(df):
     }
 
     stan_file = Path(__file__).parent / "model.stan"
-    with open(stan_file, "r") as file:
-        stan_code = file.read()
-
-    stan_model = stan.build(stan_code, data=stan_data)
+    stan_model = CmdStanModel(stan_file=stan_file)
 
     stan_fit = stan_model.sample(
-        num_chains=4,
-        num_samples=5000,
-        num_warmup=5000,
-        num_thin=25,
-        init=[
-            {
-                "min": 20.0,
-                "amplitude": 40.0,
-                "phase": 0.17,
-                "beta_c1": 0.0,
-                "beta_s1": 0.0,
-            }
-        ]
-        * 4,
-    ).to_frame()
+        data=stan_data,
+        chains=4,
+        parallel_chains=4,
+        iter_warmup=5000,
+        iter_sampling=5000,
+        thin=25,
+        inits={
+            "min": 20.0,
+            "amplitude": 40.0,
+            "phase": 0.17,
+            "beta_c1": 0.0,
+            "beta_s1": 0.0,
+        },
+    )
+    # print(stan_fit.summary())
 
-    return stan_fit
+    return stan_fit.stan_variables()
 
 
 # -----------------------------------------------------------------------------

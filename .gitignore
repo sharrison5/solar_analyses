@@ -1,2 +1,4 @@
 build/
+.cmdstan/
 __pycache__/
+solar_analyses/model
