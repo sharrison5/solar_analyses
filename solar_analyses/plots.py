@@ -18,7 +18,9 @@
 
 import calendar
 import math
-import matplotlib as mpl
+import matplotlib.dates
+import matplotlib.ticker
+from matplotlib.figure import Figure as mpl_Figure
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -29,7 +31,7 @@ from solar_analyses import utilities
 # -----------------------------------------------------------------------------
 
 
-def plot_raw_data(df):
+def plot_raw_data(df: pd.DataFrame) -> dict[str, mpl_Figure]:
     """Generate summary plots of key parameters from Fronius reports."""
 
     figures = {}
@@ -50,7 +52,9 @@ def plot_raw_data(df):
 # -----------------------------------------------------------------------------
 
 
-def plot_annual_variation(df, stan_fit):
+def plot_annual_variation(
+    df: pd.DataFrame, stan_fit: dict[str, np.ndarray]
+) -> dict[str, mpl_Figure]:
     """Summarise the posterior over the seasonal fluctuation in production."""
 
     figures = {}
@@ -83,9 +87,9 @@ def plot_annual_variation(df, stan_fit):
     # And finally the available energy (i.e. without saturation) for comparison
     ax.plot(dates, E_available.mean(axis="columns"), "w", linewidth=3.0)
     ax.plot(dates, E_available.mean(axis="columns"), "tab:red", label=r"$E_{avail}(t)$")
-    ax.set_xlim(dates[0], dates[-1])
-    ax.xaxis.set_major_locator(mpl.dates.MonthLocator(bymonthday=15))
-    ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%b"))
+    ax.set_xlim(dates[0], dates[-1])  # type: ignore [bad-argument-type]
+    ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator(bymonthday=15))
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b"))
     ax.set_xlabel("Time of year")
     ax.set_ylabel("Energy (kWh)")
     ax.legend()
@@ -93,14 +97,14 @@ def plot_annual_variation(df, stan_fit):
     figures["annual_variation"] = fig
 
     # Plot the date at which the maximum occurs
-    max_date_hist = E_optimal.idxmax(axis="index").round("D").value_counts()
+    max_date_hist = E_optimal.idxmax(axis="index").dt.round(freq="D").value_counts()  # type: ignore [no-matching-overload]
     # Wrap Jan to after December rather than at start of year
     max_date_hist.index = max_date_hist.index.map(
         lambda x: x + pd.DateOffset(years=(x.month <= 6))
     )
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.bar(max_date_hist.index, max_date_hist / sum(max_date_hist))
-    ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d-%b"))
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d-%b"))
     ax.set_xlabel(r"Date of peak production (argmax $E_{opt}(t)$)")
     ax.set_ylabel("Probability")
     fig.autofmt_xdate()
@@ -131,13 +135,17 @@ def plot_annual_variation(df, stan_fit):
 # -----------------------------------------------------------------------------
 
 
-def plot_optimal_production(df, stan_fit):
+def plot_optimal_production(
+    df: pd.DataFrame, stan_fit: dict[str, np.ndarray]
+) -> dict[str, mpl_Figure]:
     """Summarise the posterior over the optimal production curve."""
 
     figures = {}
 
     optimal_production = utilities.extract_posterior_timeseries(
-        "E_optimal", df.index, stan_fit
+        "E_optimal",
+        df.index,  # type: ignore[bad-argument-type]
+        stan_fit,
     )
 
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
@@ -180,15 +188,19 @@ def plot_optimal_production(df, stan_fit):
 # -----------------------------------------------------------------------------
 
 
-def plot_weather_effect(df, stan_fit):
+def plot_weather_effect(
+    df: pd.DataFrame, stan_fit: dict[str, np.ndarray]
+) -> dict[str, mpl_Figure]:
     """Summarise the posterior over the weather effect parameters."""
 
     figures = {}
 
     weather_effect = utilities.extract_posterior_timeseries(
-        "weather_effect", df.index, stan_fit
+        "weather_effect",
+        df.index,  # type: ignore[bad-argument-type]
+        stan_fit,
     )
-    offset_in_year = utilities.date_to_offset_in_year(weather_effect.index)
+    offset_in_year = utilities.date_to_offset_in_year(weather_effect.index)  # type: ignore[bad-argument-type]
 
     # Plot weather effect over time
     fig, ax = plt.subplots(figsize=[8.0, 4.0])
@@ -253,7 +265,7 @@ def plot_weather_effect(df, stan_fit):
         ]
     )
 
-    def basis(positions):
+    def basis(positions: np.ndarray | pd.Index) -> np.ndarray:
         return np.stack(
             [
                 np.sin(2.0 * math.pi * positions / 12),
@@ -268,7 +280,7 @@ def plot_weather_effect(df, stan_fit):
     )
     ax.plot(high_res_positions, high_res_fit, linewidth=2)
     # Labels etc.
-    ax.set_xticks(positions, [calendar.month_abbr[p] for p in positions])
+    ax.set_xticks(positions, [calendar.month_abbr[p] for p in positions])  # type: ignore [bad-argument-type]
     ax.set_xlabel("Month")
     ax.set_ylabel(r"Weather effect ($w(t)$)")
     figures["weather_effect_monthly"] = fig
@@ -277,7 +289,7 @@ def plot_weather_effect(df, stan_fit):
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     ax.hist(
         weather_effect.stack(),
-        bins=np.linspace(0.0, 1.1, 50),
+        bins=np.linspace(0.0, 1.1, 50),  # type: ignore [bad-argument-type]
         density=True,
         rwidth=0.9,
         label="Posterior samples",
@@ -299,7 +311,7 @@ def plot_weather_effect(df, stan_fit):
     fig, ax = plt.subplots(figsize=[5.0, 4.0])
     lags = np.arange(0, 20)
     autocorr = pd.DataFrame(
-        [weather_effect.apply(lambda s: s.autocorr(lag), axis="rows") for lag in lags],
+        [weather_effect.apply(lambda s: s.autocorr(lag), axis="index") for lag in lags],
         index=lags,
     )
     # Null
@@ -321,7 +333,7 @@ def plot_weather_effect(df, stan_fit):
     # Then the median over samples (illustrative only, doesn't account for
     # temporal dependencies)
     ax.plot(lags, autocorr.median(axis="columns"), label="Median over samples")
-    ax.xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
+    ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=True))
     ax.grid(which="major", linestyle=":")
     ax.set_ylabel(r"Autocorrelation of weather effect ($w(t)$)")
     ax.set_xlabel("Lag (days)")

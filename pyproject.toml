@@ -16,12 +16,20 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/sharrison5/solar_analyses"
 
+[tool.pyrefly]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
 [tool.uv]
 python-preference = "only-managed"
 
 [dependency-groups]
 dev = [
     "ipython~=8.29",
+    "pandas-stubs~=2.3",
     "pre-commit~=4.0",
+    "pyrefly~=1.0",
     "ruff==0.15.5",
 ]

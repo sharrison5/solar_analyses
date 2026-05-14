@@ -31,10 +31,11 @@ CMDSTAN=.cmdstan/cmdstan-2.38.0 uv run analyses.py
 ```
 You can assume CmdStan is already available.
 
-Lint, format, etc.:
+Lint, format, type checking, etc.:
 ```bash
 uv run ruff check
 uv run ruff format
+uv run pyrefly check
 ```
 Note that these will also be run as pre-commit hooks.
 

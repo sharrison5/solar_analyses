@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from matplotlib.figure import Figure as mpl_Figure
 import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
@@ -27,7 +28,7 @@ from solar_analyses import analysis, modelling, plots, utilities
 
 figure_dir = Path("figures")
 
-figures = {}
+figures: dict[str, mpl_Figure] = {}
 
 # -----------------------------------------------------------------------------
 # Load and preprocess data

@@ -16,12 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+import numpy as np
 import pandas as pd
 
 # -----------------------------------------------------------------------------
 
 
-def load_report(path):
+def load_report(path: str | os.PathLike) -> pd.DataFrame:
     """Loads a Fronius report into a pandas.DataFrame."""
     df = pd.read_csv(path, skiprows=[1])
     df["Date and time"] = pd.to_datetime(df["Date and time"], format="%d.%m.%Y")
@@ -29,7 +32,7 @@ def load_report(path):
     return df
 
 
-def load_predictions():
+def load_predictions() -> pd.DataFrame:
     """Loads the predicted monthly output into a pandas.DataFrame."""
     df = pd.read_csv("predicted_production.csv", index_col="Month")
     return df
@@ -38,7 +41,7 @@ def load_predictions():
 # -----------------------------------------------------------------------------
 
 
-def date_to_offset_in_year(dates):
+def date_to_offset_in_year(dates: pd.DatetimeIndex) -> pd.Index:
     """Transform dates into the proportion of the current year that has passed."""
     return (dates.day_of_year - 1) / (365 + dates.is_leap_year)
 
@@ -46,7 +49,9 @@ def date_to_offset_in_year(dates):
 # -----------------------------------------------------------------------------
 
 
-def extract_posterior_timeseries(parameter, dates, stan_fit):
+def extract_posterior_timeseries(
+    parameter: str, dates: pd.DatetimeIndex, stan_fit: dict[str, np.ndarray]
+) -> pd.DataFrame:
     """Extract a posterior timeseries into a properly indexed DataFrame."""
 
     return pd.DataFrame(stan_fit[parameter].T, index=dates).rename_axis(

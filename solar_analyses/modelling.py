@@ -17,6 +17,9 @@
 # limitations under the License.
 
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 from cmdstanpy import CmdStanModel
 
 from solar_analyses import utilities
@@ -24,12 +27,12 @@ from solar_analyses import utilities
 # -----------------------------------------------------------------------------
 
 
-def fit_model(df):
+def fit_model(df: pd.DataFrame) -> dict[str, np.ndarray]:
     """Estimates the posterior over key parameters using Stan."""
     stan_data = {
         "N": len(df),
         "production": (df["Total production"]).to_numpy(),
-        "t_year": utilities.date_to_offset_in_year(df.index).to_numpy(),
+        "t_year": utilities.date_to_offset_in_year(df.index).to_numpy(),  # type: ignore[bad-argument-type]
     }
 
     stan_file = Path(__file__).parent / "model.stan"

@@ -21,7 +21,9 @@ import pandas as pd
 # -----------------------------------------------------------------------------
 
 
-def compare_with_predictions(observations, predictions):
+def compare_with_predictions(
+    observations: pd.DataFrame, predictions: pd.DataFrame
+) -> pd.DataFrame:
     """Combines the predictions with the observed monthly output."""
 
     predictions = predictions.rename(columns={"Production (kWh)": "Predicted (kWh)"})
