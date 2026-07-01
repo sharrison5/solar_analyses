@@ -9,6 +9,8 @@ dependencies = [
     "matplotlib~=3.9",
     "numpy~=2.4",
     "pandas~=2.2",
+    "pydantic~=2.13",
+    "pyyaml~=6.0",
     "scipy~=1.14",
     "tabulate~=0.9",
 ]
@@ -32,4 +34,5 @@ dev = [
     "pre-commit~=4.0",
     "pyrefly~=1.0",
     "ruff==0.15.5",
+    "types-pyyaml~=6.0",
 ]

@@ -1,0 +1,225 @@
+--------------------------------------------------------------------------------
+
+2021-04-16 to 2021-04-30
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.226320/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.345000/day
+
+--------------------------------------------------------------------------------
+2021-05-01 to 2021-09-30
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.259095/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.345000/day
+
+--------------------------------------------------------------------------------
+2021-10-01 to 2022-03-31
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.226320/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.345000/day
+
+--------------------------------------------------------------------------------
+2022-04-01 to 2022-04-30
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.231035/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.690000/day
+
+--------------------------------------------------------------------------------
+2022-05-01 to 2022-09-30
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.265535/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.690000/day
+
+--------------------------------------------------------------------------------
+2022-10-01 to 2023-03-31
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.231035/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.690000/day
+
+--------------------------------------------------------------------------------
+2023-04-01 to 2024-03-31
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  import weekend:   A A A A A A  A A A A A A  A A A A A A  A A A A A A
+  export weekday:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+  export weekend:   B B B B B B  B B B B B B  B B B B B B  B B B B B B
+
+Rates (inc. GST, losses)
+  A: $0.253460/kWh
+  B: $0.101890/kWh
+  Daily charge: $0.862500/day
+
+--------------------------------------------------------------------------------
+2024-04-01 to 2025-03-31
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.280370/kWh
+  B: $0.345000/kWh
+  C: $0.140875/kWh
+  Daily charge: $1.207500/day
+
+--------------------------------------------------------------------------------
+2025-04-01 to 2025-04-30
+Low ecoSAVER
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.308315/kWh
+  B: $0.359720/kWh
+  C: $0.158010/kWh
+  Daily charge: $1.552500/day
+
+--------------------------------------------------------------------------------
+2025-05-01 to 2025-08-31
+Low ecoSOLAR
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C D D D D C  C C C C C D  D D D C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.316595/kWh
+  B: $0.351095/kWh
+  C: $0.184000/kWh
+  D: $0.241500/kWh
+  Daily charge: $1.552500/day
+
+--------------------------------------------------------------------------------
+2025-09-01 to 2026-03-31
+Low ecoSOLAR
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C D D D D C  C C C C C D  D D D C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.316595/kWh
+  B: $0.351095/kWh
+  C: $0.184000/kWh
+  D: $0.241500/kWh
+  Daily charge: $1.610000/day
+
+--------------------------------------------------------------------------------
+2026-04-01 to 2026-04-30
+Low ecoSOLAR
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C D D D D C  C C C C C D  D D D C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.321655/kWh
+  B: $0.390655/kWh
+  C: $0.184000/kWh
+  D: $0.241500/kWh
+  Daily charge: $1.782500/day
+
+--------------------------------------------------------------------------------
+2026-05-01 to 2026-09-30
+Low ecoSOLAR
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C D D D D E  C C C C C D  D D D E C C
+  export weekend:   C C C C C C  C E E E E E  C C C C C E  E E E E C C
+
+Rates (inc. GST, losses)
+  A: $0.321655/kWh
+  B: $0.390655/kWh
+  C: $0.184000/kWh
+  D: $0.276000/kWh
+  E: $0.218500/kWh
+  Daily charge: $1.782500/day
+
+--------------------------------------------------------------------------------
+2026-10-01 to 2027-03-31
+Low ecoSOLAR
+
+                  00           06           12           18           24
+  import weekday:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  import weekend:   A A A A A A  A B B B B B  A A A A A B  B B B B A A
+  export weekday:   C C C C C C  C D D D D C  C C C C C D  D D D C C C
+  export weekend:   C C C C C C  C C C C C C  C C C C C C  C C C C C C
+
+Rates (inc. GST, losses)
+  A: $0.321655/kWh
+  B: $0.390655/kWh
+  C: $0.184000/kWh
+  D: $0.241500/kWh
+  Daily charge: $1.782500/day
+
+--------------------------------------------------------------------------------

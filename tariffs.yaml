@@ -1,0 +1,241 @@
+# -----------------------------------------------------------------------------
+# Initial tariff
+
+- start: 2021-04-16
+  end: 2022-03-31
+  description: Low ecoSAVER
+
+  network:
+    kind: seasonal
+    daily: 0.15
+    winter:
+      import_rate:
+        peak: 0.0884
+        off_peak: 0.0884
+    summer:
+      import_rate:
+        peak: 0.0599
+        off_peak: 0.0599
+
+  electricity:
+    import_rate:
+      peak: 0.1354
+      off_peak: 0.1354
+    export_rate:
+      peak: 0.0886
+      off_peak: 0.0886
+    daily: 0.0
+
+  other:
+    authority_levy: 0.0015
+    metering: 0.15
+
+# -----------------------------------------------------------------------------
+# Network price update
+
+- start: 2022-04-01
+  end: 2023-03-31
+  description: Low ecoSAVER
+
+  network:
+    kind: seasonal
+    daily: 0.30
+    winter:
+      import_rate:
+        peak: 0.094
+        off_peak: 0.094
+    summer:
+      import_rate:
+        peak: 0.064
+        off_peak: 0.064
+
+  electricity:
+    import_rate:
+      peak: 0.1354
+      off_peak: 0.1354
+    export_rate:
+      peak: 0.0886
+      off_peak: 0.0886
+    daily: 0.0
+
+  other:
+    authority_levy: 0.0015
+    metering: 0.30
+
+# -----------------------------------------------------------------------------
+# Network price update (no longer seasonal)
+
+- start: 2023-04-01
+  end: 2024-03-31
+  description: Low ecoSAVER
+
+  network:
+    kind: flat
+    daily: 0.45
+    import_rate:
+      peak: 0.0835
+      off_peak: 0.0835
+
+  electricity:
+    import_rate:
+      peak: 0.1354
+      off_peak: 0.1354
+    export_rate:
+      peak: 0.0886
+      off_peak: 0.0886
+    daily: 0.0
+
+  other:
+    authority_levy: 0.0015
+    metering: 0.30
+
+# -----------------------------------------------------------------------------
+# Network price update (now time-of-use based)
+# Electricity price update
+
+- start: 2024-04-01
+  end: 2025-03-31
+  description: Low ecoSAVER
+
+  network:
+    kind: flat
+    daily: 0.60
+    import_rate:
+      peak: 0.1019
+      off_peak: 0.0719
+
+  electricity:
+    import_rate:
+      peak: 0.1966
+      off_peak: 0.1704
+    export_rate:
+      peak: 0.1225
+      off_peak: 0.1225
+    daily: 0.15
+
+  other:
+    authority_levy: 0.0015
+    metering: 0.30
+
+# -----------------------------------------------------------------------------
+# Network price update
+# Electricity price update
+
+- start: 2025-04-01
+  end: 2025-04-30
+  description: Low ecoSAVER
+
+  network:
+    kind: flat
+    daily: 0.75
+    import_rate:
+      peak: 0.1143
+      off_peak: 0.0843
+
+  electricity:
+    import_rate:
+      peak: 0.1965
+      off_peak: 0.1818
+    export_rate:
+      peak: 0.1374
+      off_peak: 0.1374
+    daily: 0.30
+
+  other:
+    authority_levy: 0.002
+    metering: 0.30
+
+# -----------------------------------------------------------------------------
+# Change electricity plan
+
+- start: 2025-05-01
+  end: 2025-08-31
+  description: Low ecoSOLAR
+
+  network:
+    kind: flat
+    daily: 0.75
+    import_rate:
+      peak: 0.1143
+      off_peak: 0.0843
+
+  electricity:
+    import_rate:
+      peak: 0.18
+      off_peak: 0.18
+      # This technical varies over winter/summary and day/night, but averages out to about 5%
+      loss_factor: 1.05
+    export_rate:
+      peak: 0.21
+      off_peak: 0.16
+    daily: 0.30
+
+  other:
+    authority_levy: 0.002
+    metering: 0.30
+
+# -----------------------------------------------------------------------------
+# Metering fee update
+
+- start: 2025-09-01
+  end: 2026-03-31
+  description: Low ecoSOLAR
+
+  network:
+    kind: flat
+    daily: 0.75
+    import_rate:
+      peak: 0.1143
+      off_peak: 0.0843
+
+  electricity:
+    import_rate:
+      peak: 0.18
+      off_peak: 0.18
+      loss_factor: 1.05
+    export_rate:
+      peak: 0.21
+      off_peak: 0.16
+    daily: 0.30
+
+  other:
+    authority_levy: 0.002
+    metering: 0.35
+
+# -----------------------------------------------------------------------------
+# Network price update
+
+- start: 2026-04-01
+  end: 2027-03-31
+  description: Low ecoSOLAR
+
+  network:
+    kind: seasonal
+    daily: 0.90
+    winter:
+      import_rate:
+        peak: 0.1487
+        off_peak: 0.0887
+      export_rate:
+        peak: 0.03
+        off_peak: 0.0
+    summer:
+      import_rate:
+        peak: 0.1487
+        off_peak: 0.0887
+
+  electricity:
+    import_rate:
+      peak: 0.18
+      off_peak: 0.18
+      loss_factor: 1.05
+    export_rate:
+      peak: 0.21
+      off_peak: 0.16
+    daily: 0.30
+
+  other:
+    authority_levy: 0.002
+    metering: 0.35
+
+# -----------------------------------------------------------------------------
