@@ -61,11 +61,11 @@ _NETWORK_WINTER_MONTHS: frozenset[int] = frozenset(range(5, 10))
 # -----------------------------------------------------------------------------
 # Ecotricity (i.e. retailer) peak/off-peak periods
 
-# "The PEAK period runs from 7am - 11am and 5pm - 9pm." (Monday–Friday only)
 _RETAILER_IMPORT_PEAK_PERIOD = _PeakPeriod(
     weekday=((time(7), time(12)), (time(17), time(22))),
     weekend=((time(7), time(12)), (time(17), time(22))),
 )
+# "The PEAK period runs from 7am - 11am and 5pm - 9pm." (Monday–Friday only)
 _RETAILER_EXPORT_PEAK_PERIOD = _PeakPeriod(
     weekday=((time(7), time(11)), (time(17), time(21))),
     weekend=(),
