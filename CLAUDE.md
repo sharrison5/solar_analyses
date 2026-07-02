@@ -34,7 +34,7 @@ You can assume CmdStan is already available.
 Lint, format, type checking, etc.:
 ```bash
 uv run ruff check
-uv run ruff format
+uv run ruff format --check
 uv run pyrefly check
 ```
 Note that these will also be run as pre-commit hooks.
@@ -58,7 +58,7 @@ energy production as:
 Duffie & Beckman 2013) used to justify the core modelling decisions but is
 currently unused by the main analysis scripts.
 
-## Key conventions
+## Key Conventions
 
 - Package manager is `uv` (Python pinned in `.python-version`); use `uv run`
   for all commands
@@ -68,3 +68,16 @@ currently unused by the main analysis scripts.
   and rebuilt automatically
 - Figures are committed to the repo; reports CSV data is committed as the data
   source
+
+## Billing Submodule
+
+Note that there is a separate `solar_analyses/billing` module. This, along with
+`tariffs.yaml` and `summarise_tariffs.py` in the repo root, can be used to
+calculate how the cost of electricity has changed over the life of the system.
+This is primarily useful for managing the data that Fronius Solar.web needs and,
+for now, is separate to the core modelling code.
+
+```bash
+uv run summarise_tariffs.py
+diff tariff_summary.txt <(uv run summarise_tariffs.py)
+```
