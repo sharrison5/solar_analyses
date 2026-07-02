@@ -9,21 +9,13 @@
     kind: seasonal
     daily: 0.15
     winter:
-      import_rate:
-        peak: 0.0884
-        off_peak: 0.0884
+      import_rate: 0.0884
     summer:
-      import_rate:
-        peak: 0.0599
-        off_peak: 0.0599
+      import_rate: 0.0599
 
   electricity:
-    import_rate:
-      peak: 0.1354
-      off_peak: 0.1354
-    export_rate:
-      peak: 0.0886
-      off_peak: 0.0886
+    import_rate: 0.1354
+    export_rate: 0.0886
     daily: 0.0
 
   other:
@@ -41,21 +33,13 @@
     kind: seasonal
     daily: 0.30
     winter:
-      import_rate:
-        peak: 0.094
-        off_peak: 0.094
+      import_rate: 0.094
     summer:
-      import_rate:
-        peak: 0.064
-        off_peak: 0.064
+      import_rate: 0.064
 
   electricity:
-    import_rate:
-      peak: 0.1354
-      off_peak: 0.1354
-    export_rate:
-      peak: 0.0886
-      off_peak: 0.0886
+    import_rate: 0.1354
+    export_rate: 0.0886
     daily: 0.0
 
   other:
@@ -72,17 +56,11 @@
   network:
     kind: flat
     daily: 0.45
-    import_rate:
-      peak: 0.0835
-      off_peak: 0.0835
+    import_rate: 0.0835
 
   electricity:
-    import_rate:
-      peak: 0.1354
-      off_peak: 0.1354
-    export_rate:
-      peak: 0.0886
-      off_peak: 0.0886
+    import_rate: 0.1354
+    export_rate: 0.0886
     daily: 0.0
 
   other:
@@ -108,9 +86,7 @@
     import_rate:
       peak: 0.1966
       off_peak: 0.1704
-    export_rate:
-      peak: 0.1225
-      off_peak: 0.1225
+    export_rate: 0.1225
     daily: 0.15
 
   other:
@@ -136,9 +112,7 @@
     import_rate:
       peak: 0.1965
       off_peak: 0.1818
-    export_rate:
-      peak: 0.1374
-      off_peak: 0.1374
+    export_rate: 0.1374
     daily: 0.30
 
   other:
@@ -203,7 +177,7 @@
     metering: 0.35
 
 # -----------------------------------------------------------------------------
-# Network price update
+# Network price update (added winter export)
 
 - start: 2026-04-01
   end: 2027-03-31

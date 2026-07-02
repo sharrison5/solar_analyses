@@ -35,14 +35,24 @@ class _TimeVaryingRate(BaseModel):
     off_peak: _PricePerkWh
 
 
+_Rate = _TimeVaryingRate | _PricePerkWh
+
+
+def extract_price_per_kwh(rate: _Rate, *, is_peak: bool) -> Decimal:
+    """Map from a rate to a single NZD/kWh value."""
+    if isinstance(rate, Decimal):
+        return rate
+    return rate.peak if is_peak else rate.off_peak
+
+
 # -----------------------------------------------------------------------------
 
 
 class _ImportExportRate(BaseModel):
     """Import and export rates."""
 
-    import_rate: _TimeVaryingRate
-    export_rate: _TimeVaryingRate | None = None
+    import_rate: _Rate
+    export_rate: _Rate = Decimal("0")
 
 
 class _FlatNetworkCharges(_ImportExportRate):
@@ -79,8 +89,8 @@ class _ElectricityCharges(BaseModel):
     """Electricity retailer (Ecotricity) charges."""
 
     daily: _PricePerDay
-    import_rate: _TimeVaryingRateWithLosses
-    export_rate: _TimeVaryingRate
+    import_rate: _TimeVaryingRateWithLosses | _PricePerkWh
+    export_rate: _Rate
 
 
 # -----------------------------------------------------------------------------

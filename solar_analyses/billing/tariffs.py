@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta, time
 from decimal import Decimal
 
-from .schema import Tariff
+from .schema import Tariff, extract_price_per_kwh
 
 # -----------------------------------------------------------------------------
 
@@ -115,18 +115,18 @@ def _import_rate(
         network_rate = (
             network.winter.import_rate if is_winter else network.summer.import_rate
         )
-    network_kwh = (
-        network_rate.peak
-        if _NETWORK_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday)
-        else network_rate.off_peak
+    network_kwh = extract_price_per_kwh(
+        network_rate,
+        is_peak=_NETWORK_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday),
     )
 
-    retailer_base = (
-        tariff.electricity.import_rate.peak
-        if _RETAILER_IMPORT_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday)
-        else tariff.electricity.import_rate.off_peak
+    retailer_rate = tariff.electricity.import_rate
+    retailer_kwh = extract_price_per_kwh(
+        retailer_rate,
+        is_peak=_RETAILER_IMPORT_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday),
     )
-    retailer_kwh = retailer_base * tariff.electricity.import_rate.loss_factor
+    if hasattr(retailer_rate, "loss_factor"):
+        retailer_kwh *= retailer_rate.loss_factor
 
     return (network_kwh + retailer_kwh + tariff.other.authority_levy) * (1 + GST_RATE)
 
@@ -141,19 +141,15 @@ def _export_rate(
         network_rate = (
             network.winter.export_rate if is_winter else network.summer.export_rate
         )
-    if network_rate is not None:
-        network_kwh = (
-            network_rate.peak
-            if _NETWORK_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday)
-            else network_rate.off_peak
-        )
-    else:
-        network_kwh = Decimal("0")
+    network_kwh = extract_price_per_kwh(
+        network_rate,
+        is_peak=_NETWORK_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday),
+    )
 
-    retailer_kwh = (
-        tariff.electricity.export_rate.peak
-        if _RETAILER_EXPORT_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday)
-        else tariff.electricity.export_rate.off_peak
+    retailer_rate = tariff.electricity.export_rate
+    retailer_kwh = extract_price_per_kwh(
+        retailer_rate,
+        is_peak=_RETAILER_EXPORT_PEAK_PERIOD.is_peak(hour=hour, is_weekday=is_weekday),
     )
 
     return (network_kwh + retailer_kwh) * (1 + GST_RATE)
