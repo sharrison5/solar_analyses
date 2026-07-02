@@ -177,4 +177,6 @@ shown to highlight any seasonal fluctuations.
 ```console
 uv run install_cmdstan -d .cmdstan
 CMDSTAN=.cmdstan/cmdstan-2.38.0 uv run analyses.py
+
+uv run summarise_tariffs.py [> tariff_summary.txt]
 ```
